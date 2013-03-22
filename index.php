@@ -36,30 +36,7 @@ include('auth.php');
 </head>
 
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="/autocross">GGC BMW CCA Autocross</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active"><a href="/autocross">Autocross Home</a></li>
-              <li><a href="classify.php">Car Classifier</a></li>
-              <li><a href="showcars.php">Show all classified cars</a></li>  
-              <?php if ($usergroup == "admin") { echo"<li><a href='admin.php'>Admin</a></li>";} ?>
-            </ul>
-            <?php if ($username) { echo"<ul class='nav pull-right'>  
-              <li><a href='logout.php'>Logout $fullname</a></li>             
-            </ul>"; } ?>
-            ?>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+<?php include('navbar.html');?>
 
 <div class="container">
 	<div class="row-fluid">
