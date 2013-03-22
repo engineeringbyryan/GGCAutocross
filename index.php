@@ -150,7 +150,7 @@ if (mysql_num_rows($result) != "0") {
 	
 	}
 	
-	echo"</tbody></table>";
+	echo"</tbody></table><p><i>You cannot edit an existing classification. To make changes, you must delete the car and re-classify.</i></p>";
 
 }
 
