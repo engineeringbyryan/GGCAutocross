@@ -278,12 +278,16 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 
 
           
-     echo"<table id='enginetablemulti' class='table table-condensed table-hover'><thead><tr><th>Name</th><th>% addt'l horsepower</th></tr></thead><tbody>";
+     echo"<table class='table table-condensed table-hover table-bordered enginetablemulti'><thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th style='padding-left:30px;'>% addt'l horsepower</th></tr></thead><tbody>";
     $result = mysql_query("SELECT * FROM `autox_mods_engine` ORDER BY `percent` ASC") or die("Error: " . mysql_error());
     while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
         echo "<tr><Td class='span6' style='padding-left:30px;'>$row[2]</td><td class='span2' id='pointvalue' style='padding-left:30px;'>$row[3] </td><input type='hidden' name='engine_id[$row[0]]' value='false'></tr>";
     }
-    
+     echo"</table><table class='table table-condensed table-bordered enginetablemultiresults'>
+
+    <Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div id='percent' style='display: inline;'>0</div>%</td></tr>
+    <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div id='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
+ 
     echo "</table>";
     
     $rwhp = round($_SESSION[BHP] * .85);
@@ -414,7 +418,8 @@ updatefloater(currentvalue);
 
 $(document).ready(function(){
 
-	$('#enginetablemulti').hide();
+	$('.enginetablemulti').hide();
+    $('.enginetablemultiresults').hide();
 	$('#rwhptable').hide();
 	$('#percenttable').hide();
 	$('#submitclassification').hide();
@@ -443,7 +448,8 @@ if ($usergroup == "admin"){ echo "
 $('#showenginetable').on('click', function(event) {
 	event.preventDefault();
 	console.log('default ' + event.type + ' prevented');
-	$('#enginetablemulti').show();
+	$('.enginetablemulti').show();
+    $('.enginetablemultiresults').show();
 	$('#showrwhptable').hide();
 	$('#showenginetable').hide();
 	$('#percenttable').show();
@@ -529,7 +535,7 @@ $('#modstablemulti tbody tr').on('click', function(event) {
 
 
 
-$('#enginetablemulti tbody tr').on('click', function(event) {
+$('.enginetablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
         $(this).removeClass('selected');
