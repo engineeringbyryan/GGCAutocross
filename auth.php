@@ -1,5 +1,5 @@
 <?php
-//nice.
+
 $result = mysql_query("SELECT * FROM autox_close") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	$close = $row[1];

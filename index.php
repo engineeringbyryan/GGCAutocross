@@ -69,18 +69,16 @@ A typical signup process for a <u>first timer</u> is:
 
 $result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '$username' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());
 if (mysql_num_rows($result) == "0"){
-	echo"<span class='badge badge-important'>You have not chosen a number.  You must choose a number to compete!</span>";
+	echo"<span class='badge badge-important'>You have not chosen a number.  You must choose a number to compete!</span>  Choose a number here: ";
 	
 } else {
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 		$mynumber = $row[0];
 	}
 
-	echo"<h4>Your autocross number is $mynumber. Want a new number? "; 
+	echo"<p><img src='generatepic.php?number=$mynumber'></p> If you'd like a different number, choose it here: "; 
 
 }
-
-echo"Choose a number here: ";
 
 	echo"<select name='drivernumber' class='span1' id='numberform'><option value=''></option>";
 	$result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());
@@ -89,7 +87,7 @@ echo"Choose a number here: ";
 	}
 
 
-echo"</select></h4>";
+echo"</select>";
 
 
 
