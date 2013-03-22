@@ -182,6 +182,7 @@ if ($popup != 'Y'){
 ?>
 
 </div>  <!--container-->
+<?php include('bottombar.html');?>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.colorbox.js"></script>

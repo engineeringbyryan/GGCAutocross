@@ -23,12 +23,6 @@ include('auth.php');
          	background-image: url('img/satinweave.png')  /*thanks SubtlePatterns.com */
         }
         
-        .bottombar {
-	      
-	      border-width:1px; border-style: solid; border-color: black; padding: 0px; height: 20px;margin-left: auto; margin-right: auto; text-align: center; background-color: #dcdcdc; color:#000000; font-size: 15px;
-	   
-      }
-
 
       /* Select Box */
 		#copycar {
@@ -203,7 +197,7 @@ if (!$activebutton){ echo"<span class='badge badge-important' id='classwarning'>
 </div>  <!--container-->
 
 
-<div class="navbar navbar-fixed-bottom bottombar">GGC Autocross System (c)GGC BMW CCA and Kris Linquist</div>
+<?php include ('bottombar.html'); ?>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script src="js/bootstrap.min.js"></script>

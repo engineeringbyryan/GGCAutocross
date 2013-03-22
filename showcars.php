@@ -49,11 +49,6 @@ if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
          	background-image: url('img/satinweave.png')  /*thanks SubtlePatterns.com */
         }
         
-       .bottombar {
-	      
-	      border-width:1px; border-style: solid; border-color: black; padding: 0px; height: 20px;margin-left: auto; margin-right: auto; text-align: center; background-color: #dcdcdc; color:#000000; font-size: 15px;
-	   
-      }
     </style>
 </head>
 
@@ -111,7 +106,7 @@ if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
   ?>
 
 </div>  <!--container-->
-<div class="navbar navbar-fixed-bottom bottombar">GGC Autocross System (c)GGC BMW CCA and Kris Linquist</div>
+<?php include('bottombar.html');?>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.colorbox.js"></script>
