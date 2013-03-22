@@ -615,7 +615,9 @@ $("#dyno").keyup(function() {
 	        $('#percent').append("0");
 	        $('#enginemodpoints').empty();
 	        $('#enginemodpoints').append("0"); 
-            $('#dynorow').removeClass('selected');   
+            $('#dynorow').removeClass('selected');  
+            $('#explainhp').css('border', ''); 
+            $('#explainhp').attr("placeholder", ""); 
 	        updatefloater(currentvalue);	 
 	}
 });
