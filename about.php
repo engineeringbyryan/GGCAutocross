@@ -35,13 +35,15 @@ include('functions.php');
 <?php include('navbar.html');?>
 <div class="container">
 
-<p>The GGC autocross system has been created over the years as a method to classify & normalize BMW and Mini brand automobiles.  It uses a formula to calculate base points which takes into account horsepower, torque, gear ratios, differential ratios, and weight.  On top of the base points we add points for wheel widths, suspension stiffness, and owner-added modifications.</p>
+<p>The GGC autocross system has been created as a method to classify & normalize BMW and Mini brand automobiles.  It uses a formula to calculate base points which takes into account horsepower, torque, gear ratios, differential ratios, and weight.  On top of the base points we add points for wheel widths, suspension stiffness, and owner-added modifications.</p>
 
-<p>The sytstem has been primarily developed by the following indivduals:
+<p>The system has been primarily developed by the following indivduals:
 <ul>
   <li>R. Jason Sams</li>
   <li>Matt Visser</li>
 </ul></p>
+
+<p>The online system has been coded by Kris Linquist (http://www.linquist.com) using php, javascript, and jquery.  It is available open-source: <a href="http://www.github.com/klinquist/GGCAutocross">http://www.github.com/klinquist/GGCAutocross</a></p>
 
 <p>The system is revised periodically based on autocross results with known drivers.</p>
 

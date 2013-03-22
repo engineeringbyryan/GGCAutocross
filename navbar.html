@@ -11,7 +11,8 @@
             <ul class="nav">
               <li <?=echoActiveClassIfRequestMatches("autocross")?>><a href="/autocross">Autocross Home</a></li>
               <li <?=echoActiveClassIfRequestMatches("classify")?>><a href="classify.php">Car Classifier</a></li>
-              <li <?=echoActiveClassIfRequestMatches("showcars")?>><a href="showcars.php">Show all classified cars</a></li>  
+              <li <?=echoActiveClassIfRequestMatches("showcars")?>><a href="showcars.php">Show all classified cars</a></li> 
+              <li <?=echoActiveClassIfRequestMatches("about")?>><a href="about.php">About</a></li>  
               <?php if ($usergroup == "admin") { ?>
               <li <?=echoActiveClassIfRequestMatches("admin")?>><a href="admin.php">Admin</a></li> 
               <?php } ?>

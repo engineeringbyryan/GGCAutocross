@@ -26,10 +26,13 @@ include('auth.php');
 
       /* Select Box */
 		#copycar {
-  		width: 800px;
-  		cursor:pointer;
-  		white-space:nowrap;
-  	}
+	  		width: 800px;
+	  		cursor:pointer;
+	  		white-space:nowrap;
+  		}
+  	    .tablehead {
+        	background-color: #cccccc;
+      	}
 
 
     </style>
@@ -96,12 +99,12 @@ echo"</select>";
 $result = mysql_query("SELECT * FROM autox_classifications WHERE `username` = '$username' AND `active` != 'H'") or die("Error: " . mysql_error());
 if (mysql_num_rows($result) != "0") {
 	echo"<h4>Your Classified Cars</h4>";
-	if (mysql_num_rows($result) > 1) { echo"<h5>Click on a classification to make it active for the next autocross</h5>";}
+	if (mysql_num_rows($result) > 1) { echo"<h5>Click on a car to make it active for the next autocross</h5>";}
 	
 	echo"
-	<table class='table table-condensed' id='classifytable'>
+	<table class='table table-condensed table-bordered' id='classifytable'>
 	<thead>
-	<tr><th>Car</th><th>Points</th><th>Class</th><th>Actions</th></tr>
+	<tr class='tablehead'><th>Car</th><th>Points</th><th>Class</th><th>Actions</th></tr>
 	</thead><tbody>";
 
 

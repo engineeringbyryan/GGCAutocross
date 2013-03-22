@@ -45,24 +45,24 @@ if ($usergroup == "admin"){
 	
 	
 	echo"<h3>When to close the classification system</h3>
-	<h6>Relative to an autocross date - this uses php's strtodate function</h6>
+	<h6>Relative to an autocross date - this uses php's strtotime function</h6>
 	<Table class='table table-condensed'>
 	<thead><th>Close date/time</th><th>Open date/time</th><th>Message</th><th>Actions</th></thead>
 	<tbody>";	
 	$result = mysql_query("SELECT * FROM `autox_close`") or die("Error: " . mysql_error());
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-		echo"<tr id='$row[0]'><Td><input id='closedate' class='input-large' value='$row[1]'></td><Td><input id='opendate' class='input-large' value='$row[2]'></td><Td><input id='msg' class='input-large' value='$row[3]'></td><td><a href='#' class='btn updatetimes'>Update</a></td></tr>";
+		echo"<tr id='$row[0]'><Td><input id='closedate' class='input-large' value='$row[1]'></td><Td><input id='opendate' class='input-large' value='$row[2]'></td><Td><textarea id='msg' rows='3'>$row[3]</textarea></td><td><a href='#' class='btn updatetimes'>Update</a></td></tr>";
 	}
 	echo"</table>";
 	
 	if ($username){
-		echo"<a href='#' class='btn btn-danger closesystem'>Manually Close System</a> <input class='input-large' placeholder='closed message' id='closemessage'>";
+		echo"<a href='#' class='btn btn-danger closesystem'>Manually Close System</a> <textarea id='closemessage' placeholder='closed message' rows='3'></textarea>";
 	} else {
 		echo"<a href='#' class='btn btn-success opensystem'>Manually Open System</a>";
 	}
 	
 	echo"
-	
+	<br><Br><br>
 	<script src='http://code.jquery.com/jquery-latest.js'></script>
 <script src='js/bootstrap.min.js'></script>
 <script src='js/bootstrap-typeahead.js'></script>

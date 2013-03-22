@@ -73,7 +73,7 @@ if ($carid == "") {
 	$_SESSION = array();
     echo "
     <form id='step1' action='$_SERVER[PHP_SELF]' method='post' name='year'>
-    Have a BMW or Mini?
+    <p>Have a BMW or Mini?</p>
     <div class='input-append'>
      <SELECT name='year' onchange='this.form.submit()'>
     <option value=''>Select Year</option>";
@@ -93,7 +93,7 @@ if ($carid == "") {
 
 if (($carid == "") && ($year == "") && ($username != "")){
 	
-	    echo "Don't have a BMW or Mini?  Type in a description of your car: <br><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large'> <button type='submit' class='btn btn-primary'>Submit</button></form>";
+	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' placeholder='2000 Mazda Miata'> <button type='submit' class='btn btn-primary'>Submit</button></form>";
 }
 
 
@@ -288,13 +288,15 @@ if ($year != "" && $carid != "" && $wheelid != "") {
     
     $rwhp = round($_SESSION[BHP] * .85);
     $total = round($rwhp + 10);
-    echo "<table class='table table-condensed table-hover' id='rwhptable'>
-        <tr><td class='span6' style='padding-left:30px;'>Your TOTAL rear wheel (not flywheel) horsepower based on dyno or modification manufacturer claims. We think your car has approx <B>$rwhp</b> rwhp, if you added a mod that adds a claimed 10hp, enter <B>$total</b> in this box.</td><td class='span2' style='padding-left:30px;'><input type='text' name='flywheelhp' id='dyno' class='input-small'>hp</td></tr>
+    echo "<table class='table table-condensed table-hover table-bordered' id='rwhptable'>
+        <tr id='dynorow'><td class='span6' style='padding-left:30px;'>Your TOTAL rear wheel (not flywheel) horsepower based on dyno or modification manufacturer claims. We think your car has approx <B>$rwhp</b> rwhp, if you added a mod that adds a claimed 10hp, enter <B>$total</b> in this box.</td><td class='span2' style='padding-left:30px;'><input type='text' name='flywheelhp' id='dyno' class='input-small'>hp</td></tr>";
         
-       <tr><td class='span6' style='padding-left:30px;'>If you entered a RWHP number based on manufacturers claims, please list your engine mods in this box. If you entered a RWHP number based on a dyno, simply type 'dyno' into this box.</td><Td class='span2' style='padding-left:30px;'><input type='text' name='hpclaim' class='input-medium' id='explainhp'></td></tr> </table>
+       if ($username) { echo "<tr id='claimrow'><td class='span6' style='padding-left:30px;'>If you entered a RWHP number based on manufacturers claims, please list your engine mods in this box. If you entered a RWHP number based on a dyno, simply type 'dyno' into this box.</td><Td class='span2' style='padding-left:30px;'><textarea name='hpclaim' id='explainhp'></textarea></td></tr>"; }
 
-    <table class='table table-condensed' id='percenttable'>
-    <Tr><td style='padding-left:30px;'><h5>Total additional hp: <div id='percent' style='display: inline;'>0</div>%</h5></td><td><h5>Points from engine mods: <div id='enginemodpoints' style='display: inline;'>0</div></h5></td></tr></table>";
+    echo"
+
+    <Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div id='percent' style='display: inline;'>0</div>%</td></tr>
+    <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div id='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
 
     if ($username){
       echo"<div id='differentclass'><br><br><table class='table'><Tr><Td>Want to run your car in a higher or non-competitive class?  Select it here</td><Td><SELECT name='chosenclass' class='span2' id='chosenclass'>
@@ -419,6 +421,7 @@ $(document).ready(function(){
 	<?php if ($readytoclassify != "Y") { echo"$('#finalpoints').hide();"; }?>
 	$("select").selectBoxIt({});
     $('#differentclass').hide();
+
 	
 
 <?php 
@@ -602,14 +605,17 @@ $("#dyno").keyup(function() {
                 $('#explainhp').css('border', 'solid 1px red'); 
                 $('#explainhp').attr("placeholder", "Required");
             } 
-	        updatefloater(currentvalue,engineresult);	        
+	        updatefloater(currentvalue,engineresult);	
+            $('#dynorow').addClass('selected');      
+
 	           	
 	} else {
 
 	        $('#percent').empty();
 	        $('#percent').append("0");
 	        $('#enginemodpoints').empty();
-	        $('#enginemodpoints').append("0");  
+	        $('#enginemodpoints').append("0"); 
+            $('#dynorow').removeClass('selected');   
 	        updatefloater(currentvalue);	 
 	}
 });
