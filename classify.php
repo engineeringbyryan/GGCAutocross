@@ -6,7 +6,6 @@ include('auth.php');
 ?>
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <meta charset="UTF-8">
@@ -34,11 +33,8 @@ include('auth.php');
     <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
     <link href="css/selectboxit.css" rel="stylesheet" media="screen">
 </head>
-
 <body>
-
 <?php include('navbar.html'); ?>
-
 <div class="container">
     <div id="floatDiv"></div>
 <?php
@@ -109,7 +105,6 @@ if ($year != "" && $carid != "" && $wheelid == "") {
         echo "</SELECT></div></form>";
     }
 }
-
 if ($year != "" && $carid != "" && $wheelid != "") {
     $readytoclassify="Y";
     sqlconnect();
@@ -135,7 +130,6 @@ if ($year != "" && $carid != "" && $wheelid != "") {
             while ($pkgcode = mysql_fetch_array($pkgcode, MYSQL_NUM)) {
             	$_SESSION['suspension_code'] = $pkgcode[3];
             }
-
         }
     } else {
         $_SESSION['opt_package_desc']	   = "";
@@ -167,9 +161,9 @@ if ($year != "" && $carid != "" && $wheelid != "") {
         $query = "SELECT * FROM `autox_modifications` WHERE `category_id` = '$row[0]'";
         $anotherresult = mysql_query($query) or die("Error: " . mysql_error());
         if ($row[7] == "Y") { //allow a multiple selections on certain categories
-            echo "<table id='modstablemulti' class='table table-condensed table-bordered'>";
+            echo "<table class='table table-condensed table-bordered modstablemulti'>";
         } else {
-            echo "<table id='modstable' class='table table-condensed table-bordered'>";
+            echo "<table class='table table-condensed table-bordered modstable'>";
         }
         echo "<thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th>Point value</th></tr></thead><tbody>";
         while ($anotherrow = mysql_fetch_array($anotherresult, MYSQL_NUM)) {
@@ -187,14 +181,13 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 	            $suspvalue = $suspvalue + $anotherrow[4];
             }
             if ($default == "Y") { //Check to see if this needs to be default
-                echo "<tr class='selected'><Td class='span6' style='padding-left:30px;'>$anotherrow[3] $addtlinfo</td><td class='span2' id='pointvalue' style='padding-left:30px;'>$modpoints</td><input type='hidden' name='mod_id[$anotherrow[0]]' value='true'></tr>";
+                echo "<tr class='selected'><Td class='span6' style='padding-left:30px;'>$anotherrow[3] $addtlinfo</td><td class='span2 pointvalue' style='padding-left:30px;'>$modpoints</td><input type='hidden' name='mod_id[$anotherrow[0]]' value='true'></tr>";
             } else {
-                echo "<tr><Td class='span6' style='padding-left:30px;'>$anotherrow[3]</td><td class='span2' id='pointvalue' style='padding-left:30px;'>$modpoints</td><input type='hidden' name='mod_id[$anotherrow[0]]' value='false'></tr>";
+                echo "<tr><Td class='span6' style='padding-left:30px;'>$anotherrow[3]</td><td class='span2 pointvalue' style='padding-left:30px;'>$modpoints</td><input type='hidden' name='mod_id[$anotherrow[0]]' value='false'></tr>";
             }
         }
         echo "</tbody></table>";
     }
-    
     echo "<div id='enginemodificationsheader'><h4>Engine modifications</h4>
 	      <h5>Below is a list of engine modifications as well as an average percent gain that modification provides.  Click your modifications OR enter a rear wheel (not flywheel) horsepower number below that you believe is true either from a dyno chart or modification manufacturer claims.</h5></div>
 	      <center><p><button class='btn btn-info' id='showenginetable'>I wish to select my mods from a table and will assume GGC's engine gains are correct</button></p>
@@ -204,7 +197,7 @@ if ($year != "" && $carid != "" && $wheelid != "") {
     
     $result = mysql_query("SELECT * FROM `autox_mods_engine` ORDER BY `percent` ASC") or die("Error: " . mysql_error());
     while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-        echo "<tr><Td class='span6' style='padding-left:30px;'>$row[2]</td><td class='span2' id='pointvalue' style='padding-left:30px;'>$row[3] </td><input type='hidden' name='engine_id[$row[0]]' value='false'></tr>";
+        echo "<tr><Td class='span6' style='padding-left:30px;'>$row[2]</td><td class='span2 pointvalue' style='padding-left:30px;'>$row[3] </td><input type='hidden' name='engine_id[$row[0]]' value='false'></tr>";
     }
     echo"</table><table class='table table-condensed table-bordered enginetablemultiresults'>
         <Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div class='percent' style='display: inline;'>0</div>%</td></tr>
@@ -217,11 +210,8 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 
     echo"<Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div class='percent' style='display: inline;'>0</div>%</td></tr>
          <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div class='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
-
     if ($username){
-      echo"<div id='differentclass'><br><br><table class='table'><Tr><Td>Want to run your car in a higher or non-competitive class?  Select it here</td><Td><SELECT name='chosenclass' class='span2' id='chosenclass'>
- </SELECT></td></tr></table>";
-    
+      echo"<div id='differentclass'><br><br><table class='table'><Tr><Td>Want to run your car in a higher or non-competitive class?  Select it here</td><Td><SELECT name='chosenclass' class='span2' id='chosenclass'></SELECT></td></tr></table>";
 		if ($usergroup == "admin"){
 			echo"<script>
 			var peoplelist = [";
@@ -238,7 +228,6 @@ if ($year != "" && $carid != "" && $wheelid != "") {
    		}
         echo "</div><button class='btn btn-success' type='submit' id='submitclassification'>Save this classification to my user profile</button>";
     }
-    
     echo"</form>";
 }
 ?>
@@ -260,7 +249,6 @@ sqlconnect();
 $result = mysql_query("SELECT * FROM `autox_classes`") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
     echo "if (texttodisplay >= $row[1] && texttodisplay <= $row[2]) { carclass = '$row[0]'; } ";
-    
 }
 ?>
    var update = "Total points: " + texttodisplay + " - Class " + carclass;
@@ -271,7 +259,6 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
    if (carclass == 'AA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
    if (carclass == 'AAA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='Gonzo'>Gonzo</option>") ;} 
    if (carclass == 'Gonzo') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option>") ;}     
-    
 }
 <?php
 echo "var enginemods = [";
@@ -287,7 +274,6 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 }
 echo "['Z',0,0,0]];";
 ?>
-
 var cumulativepoints = 0;
 var lsd = '<?php echo $_SESSION['LSD_standard'];?>';
 var cumulativepercent = 0;
@@ -351,23 +337,23 @@ $('#hidethebuttons').on('click', function(event) {
     $('#differentclass').show();
 
 });            
-$('#modstable tbody tr').on('click', function(event) {
+$('.modstable tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
         $(this).removeClass('selected');
-        pointvalue = $(this).find("#pointvalue").html(); 
+        pointvalue = $(this).find(".pointvalue").html(); 
         pointvalue = pointvalue * 1;
         currentvalue = currentvalue - pointvalue;
         islsdselected = $(this).find('input').attr('name');
         if (islsdselected == 'mod_id[38]') { lsd = 'N';}
     } else {
         $(this).find('input').attr('value','true');           
-         pointvalue = $(this).closest("table").find(".selected").find("#pointvalue").html(); 
+         pointvalue = $(this).closest("table").find(".selected").find(".pointvalue").html(); 
         pointvalue = pointvalue * 1
         if (isNaN(pointvalue) === false) { currentvalue = currentvalue - pointvalue; }
         $(this).addClass('selected').siblings().removeClass('selected'); 
         $(this).addClass('selected').siblings().find('input').attr('value','false');  //testing this, worked!
-        pointvalue = $(this).find("#pointvalue").html(); 
+        pointvalue = $(this).find(".pointvalue").html(); 
         pointvalue = pointvalue * 1
         currentvalue = currentvalue + pointvalue;
         islsdselected = $(this).find('input').attr('name');
@@ -376,17 +362,17 @@ $('#modstable tbody tr').on('click', function(event) {
 
     updatefloater(currentvalue);
 });
-$('#modstablemulti tbody tr').on('click', function(event) {
+$('.modstablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
         $(this).removeClass('selected');
-          pointvalue = $(this).find("#pointvalue").html(); 
+          pointvalue = $(this).find(".pointvalue").html(); 
         pointvalue = pointvalue * 1
         currentvalue = currentvalue - pointvalue;
     } else {
         $(this).find('input').attr('value','true');           
         $(this).addClass('selected');
-        pointvalue = $(this).find("#pointvalue").html(); 
+        pointvalue = $(this).find(".pointvalue").html(); 
         pointvalue = pointvalue * 1
         currentvalue = currentvalue + pointvalue;
 
@@ -398,7 +384,7 @@ $('.enginetablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
         $(this).removeClass('selected');
-         pointvalue = $(this).find("#pointvalue").html(); 
+         pointvalue = $(this).find(".pointvalue").html(); 
         pointvalue = pointvalue * 1;
         cumulativepercent = cumulativepercent - pointvalue;
         if (lsd == 'N'){
@@ -414,7 +400,7 @@ $('.enginetablemulti tbody tr').on('click', function(event) {
     } else {
         $(this).find('input').attr('value','true');           
         $(this).addClass('selected');
-        pointvalue = $(this).find("#pointvalue").html(); 
+        pointvalue = $(this).find(".pointvalue").html(); 
         pointvalue = pointvalue * 1
         cumulativepercent = cumulativepercent + pointvalue;
         if (lsd == 'N'){
@@ -458,7 +444,6 @@ $("#dyno").keyup(function() {
 	        updatefloater(currentvalue,engineresult);	
             $('#dynorow').addClass('selected');      
 	} else {
-
 	        $('.percent').empty();
 	        $('.percent').append("0");
 	        $('.enginemodpoints').empty();
