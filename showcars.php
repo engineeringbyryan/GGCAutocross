@@ -3,12 +3,8 @@ include('functions.php');
 sqlconnect();
 include('auth.php');
 if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
-
 	$file = "export/" . date("Ymd") . "-classificationExport.csv";
-	//$file = "export/export.csv";
-	
-	  $result = mysql_query("SELECT autox_numbers.drivernumber,gy01d_users.name,autox_classifications.car_year,autox_classifications.car_model,autox_classifications.points,autox_classifications.class,autox_classifications.pk FROM autox_classifications,gy01d_users,autox_numbers WHERE gy01d_users.username = autox_classifications.username and gy01d_users.username = autox_numbers.username and autox_classifications.active = 'Y' ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
-	
+	$result = mysql_query("SELECT autox_numbers.drivernumber,gy01d_users.name,autox_classifications.car_year,autox_classifications.car_model,autox_classifications.points,autox_classifications.class,autox_classifications.pk FROM autox_classifications,gy01d_users,autox_numbers WHERE gy01d_users.username = autox_classifications.username and gy01d_users.username = autox_numbers.username and autox_classifications.active = 'Y' ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 		$capitalizedname = ucwords($row[1]);
 		$export = $export . "\"$row[0]\", $capitalizedname, $row[2], $row[3], $row[4], $row[5]\n";
@@ -26,14 +22,12 @@ if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
 	    flush();
 	    readfile($file);
 	    exit;
-	
 }
-
-
 ?>
 <!DOCTYPE html>
 <html>
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/colorbox.css" rel="stylesheet" media="screen">
     <meta charset="UTF-8">
@@ -48,43 +42,24 @@ if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
         body {
          	background-image: url('img/satinweave.png')  /*thanks SubtlePatterns.com */
         }
-        
     </style>
 </head>
-
 <body>
-
 <?php include('navbar.html');?>
-
 <div class="container">
-
-
-
 <?php
-
   $result = mysql_query("SELECT autox_numbers.drivernumber,gy01d_users.name,autox_classifications.car_year,autox_classifications.car_model,autox_classifications.points,autox_classifications.class,autox_classifications.pk FROM autox_classifications,gy01d_users,autox_numbers WHERE gy01d_users.username = autox_classifications.username and gy01d_users.username = autox_numbers.username and autox_classifications.active = 'Y' ORDER BY autox_classifications.points desc, autox_classifications.class, gy01d_users.name") or die("Error: " . mysql_error());
-  
-  
   	echo"<h4>All Classified Cars</h4>
-	
 	<table class='table table-condensed table-striped sortable' id='classifytable'>
 	<thead>
 	<tr><th>Number</th><th>Name</th><Th>Year</th><th>Model</th><th>Points</th><th>Class</th><th>Actions</th></tr>
 	</thead><tbody>";
-	
-	
-  
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-	
 		$capitalizedname = ucwords($row[1]);
-		
 		echo"<tr><td>$row[0]</td><Td>$capitalizedname</td><Td>$row[2]</td><td>$row[3]</td><Td>$row[4]</td><Td>$row[5]</td><Td><a href='show.php?id=$row[6]&amp;popup=Y'  class='carinfoajax btn'>View Details</a></td></tr>";
-  
 	}
-  
 	echo"</table>";
   ?>
-
 </div>  <!--container-->
 <?php include('bottombar.html');?>
 <script src="http://code.jquery.com/jquery-latest.js"></script>

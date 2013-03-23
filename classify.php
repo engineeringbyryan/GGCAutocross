@@ -8,29 +8,9 @@ include('auth.php');
 <html>
 
 <head>
-    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <meta charset="UTF-8">
      <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-      
-      .bottombar {
-	      border-width:1px; border-style: solid; border-color: black; padding: 5px; height: 25px;margin-left: auto; margin-right: auto; text-align: center; background-color: #d9edf7; color:#3a87ad; font-size: 19px;
-	   
-      }
-
-      .tablehead {
-        background-color: #cccccc;
-      }
-    </style>
-    <title>GGC BMW CCA Autocross page</title>
-    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
-    <link href="css/selectboxit.css" rel="stylesheet" media="screen">
-    <style type="text/css">
-
-        /*this is my only change to Bootstrap.  This adds the "check" for tr class=selected and the green border.*/
-        
         table { cursor:pointer; }
         .table tbody tr.selected td{
             background-image: url('img/check.png');
@@ -38,11 +18,21 @@ include('auth.php');
             border: 1px solid #007c1e; 
             background-color: #d0e9c6;
         }
-        
         body {
-         	background-image: url('img/satinweave.png')  /*thanks SubtlePatterns.com */
+            background-image: url('img/satinweave.png');  /*thanks SubtlePatterns.com */
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
         }
+      .bottombar {
+	      border-width:1px; border-style: solid; border-color: black; padding: 5px; height: 25px;margin-left: auto; margin-right: auto; text-align: center; background-color: #d9edf7; color:#3a87ad; font-size: 19px;
+      }
+      .tablehead {
+        background-color: #cccccc;
+      }
     </style>
+    <title>GGC BMW CCA Autocross page</title>
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+    <link href="css/selectboxit.css" rel="stylesheet" media="screen">
 </head>
 
 <body>
@@ -51,24 +41,14 @@ include('auth.php');
 
 <div class="container">
     <div id="floatDiv"></div>
-
 <?php
-
-
 if (!$username){
-
 	loginform();
-
 }
-
-
-
 $year    = $_POST[year];
 $carid   = $_POST[carid];
 $wheelid = $_POST[wheelid];
 $suspvalue = 0;
-
-
 if ($carid == "") {
 	$_SESSION = array();
     echo "
@@ -86,17 +66,10 @@ if ($carid == "") {
         echo "<option value='$i'>$i</option>";
     }
     echo "</SELECT></div></form>";
-        
-   
 }
-
-
 if (($carid == "") && ($year == "") && ($username != "")){
-	
 	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' placeholder='2000 Mazda Miata'> <button type='submit' class='btn btn-primary'>Submit</button></form>";
 }
-
-
 if ($year != "" && $carid == "") {
     sqlconnect();
     echo "<form id='step2' action='$_SERVER[PHP_SELF]' method='post' name='model'><input type='hidden' name='year' value='$year'>
@@ -109,12 +82,9 @@ if ($year != "" && $carid == "") {
     mysql_free_result($result);
     echo "</SELECT></div></form>";
 }
-
-
 if ($year != "" && $carid != "" && $wheelid == "") {
     sqlconnect();
     $result = mysql_query("SELECT * FROM `autox_optional_car_wheels` WHERE `car_id` = '$carid'") or die("Error: " . mysql_error());
-    
     if (mysql_num_rows($result) == 0) {
         $url = "$_SERVER[PHP_SELF]?year=$year&carid=$carid&wheelid=0";
         echo "<form id='step2' action='$_SERVER[PHP_SELF]' method='post' name='model' onload='this.form.submit()'>
@@ -125,11 +95,8 @@ if ($year != "" && $carid != "" && $wheelid == "") {
         <script>
             document.model.submit();
         </script>
-
         ";
-        
         //echo"There are no optional wheel/tire packages for this vehicle.  <a href='$url'>Click here to continue your classification</a>.";
-        
     } else {
         echo "<form id='step2' action='$_SERVER[PHP_SELF]' method='post' name='model'><input type='hidden' name='year' value='$year'><input type='hidden' name='carid' value='$carid'>
     <div class='input-append'>
@@ -140,14 +107,8 @@ if ($year != "" && $carid != "" && $wheelid == "") {
         }
         mysql_free_result($result);
         echo "</SELECT></div></form>";
-        
     }
-    
 }
-
-
-
-
 
 if ($year != "" && $carid != "" && $wheelid != "") {
     $readytoclassify="Y";
@@ -159,14 +120,7 @@ if ($year != "" && $carid != "" && $wheelid != "") {
             $_SESSION[mysql_field_name($result, $key)] = $value;
         }
     }
-    
-    
-    
-    
-    
     $wheelresult = mysql_query("SELECT * FROM `autox_optional_car_wheels` WHERE `car_id` = '$carid' AND `wheel_id` = '$wheelid'") or die("Error: " . mysql_error());
-    
-    
     if (mysql_num_rows($wheelresult) > 0) {
         while ($wheelrow = mysql_fetch_array($wheelresult, MYSQL_NUM)) {
             $_SESSION['opt_rear_wheel_width']  = $wheelrow[5];
@@ -183,25 +137,19 @@ if ($year != "" && $carid != "" && $wheelid != "") {
             }
 
         }
-        
     } else {
         $_SESSION['opt_package_desc']	   = "";
         $_SESSION['opt_package_name']      = "";
         $_SESSION['opt_rear_wheel_width']  = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!            
         $_SESSION['opt_front_wheel_width'] = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!
     }
-    
     echo "<h3>" . $year . " " . $_SESSION['car'] . "</h3>";
     if ($_SESSION[pkg_points]) {
 	    echo "<h5>" . $_SESSION['points'] . " base points + " . $_SESSION['pkg_points'] . " point from larger wheels/tires included in package</h5>";
-	    
     } else {
 	    echo "<h5>" . $_SESSION['points'] . " base points</h5>";
-    
     }
-    
     echo"<span class='label label-info'>Click on a modification to select/unselect</span><form id='options' action='calc.php' method='post'>";
-    
     $result = mysql_query("SELECT * FROM `autox_mod_categories` ORDER BY `mandatory_selection` DESC") or die("Error: " . mysql_error());
     while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
         echo "<h4>$row[5]";
@@ -209,8 +157,6 @@ if ($year != "" && $carid != "" && $wheelid != "") {
             echo "    <span class='badge badge-important'>Selection required</span>";
         }
         echo "</h4><h5>$row[6]</h5>";
-        
-        
         if ($row[0] == "11"){
 	        if ($_SESSION['opt_front_wheel_width']) { echo"<h5>We think your front wheels are ". $_SESSION['opt_front_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; } else { echo"<h5>We think your front wheels are ". $_SESSION['front_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; }
         }
@@ -218,30 +164,21 @@ if ($year != "" && $carid != "" && $wheelid != "") {
         if ($row[0] == "12"){
 	        if ($_SESSION['opt_rear_wheel_width']) { echo"<h5>We think your rear wheels are ". $_SESSION['opt_rear_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; } else { echo"<h5>We think your rear wheels are ". $_SESSION['rear_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; }
         }
-        
-        
         $query = "SELECT * FROM `autox_modifications` WHERE `category_id` = '$row[0]'";
         $anotherresult = mysql_query($query) or die("Error: " . mysql_error());
         if ($row[7] == "Y") { //allow a multiple selections on certain categories
-            echo "<table id='modstablemulti' class='table table-condensed table-hover table-bordered'>";
+            echo "<table id='modstablemulti' class='table table-condensed table-bordered'>";
         } else {
-            echo "<table id='modstable' class='table table-condensed table-hover table-bordered'>";
+            echo "<table id='modstable' class='table table-condensed table-bordered'>";
         }
         echo "<thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th>Point value</th></tr></thead><tbody>";
-        
-        
         while ($anotherrow = mysql_fetch_array($anotherresult, MYSQL_NUM)) {
             if ($anotherrow[0] == "38") {
                 $modpoints = $_SESSION['lsd_points'];
             } else {
                 $modpoints = $anotherrow[4];
             } //for limited slip
-            
-            
             $default = $anotherrow[1];
-	            
-
-            
             if  ($_SESSION['suspension_code'] == $anotherrow[5]) {
 	            $default = "Y"; 
 	            if ($anotherrow[5] != "B") {
@@ -249,68 +186,45 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 			    }
 	            $suspvalue = $suspvalue + $anotherrow[4];
             }
-            
-
-            
             if ($default == "Y") { //Check to see if this needs to be default
                 echo "<tr class='selected'><Td class='span6' style='padding-left:30px;'>$anotherrow[3] $addtlinfo</td><td class='span2' id='pointvalue' style='padding-left:30px;'>$modpoints</td><input type='hidden' name='mod_id[$anotherrow[0]]' value='true'></tr>";
             } else {
                 echo "<tr><Td class='span6' style='padding-left:30px;'>$anotherrow[3]</td><td class='span2' id='pointvalue' style='padding-left:30px;'>$modpoints</td><input type='hidden' name='mod_id[$anotherrow[0]]' value='false'></tr>";
             }
-            
-
         }
         echo "</tbody></table>";
     }
     
-    
-    
     echo "<div id='enginemodificationsheader'><h4>Engine modifications</h4>
-	      <h5>Below is a list of engine modifications as well as an average percent gain that modification provides.  Click your modifications OR enter a rear wheel (not flywheel) horsepower number below that you believe is true either from a dyno chart or modification manufacturer claims.</h5></div>";
-	      
-
-
-	      
-	 echo"<center><p><button class='btn btn-info' id='showenginetable'>I wish to select my mods from a table and will assume GGC's engine gains are correct</button></p>
-     <p><button class='btn btn-info' id='showrwhptable'>I wish to enter a rear wheel HP number</button></p>
-     <p><button class='btn btn-info' id='hidethebuttons'>I have no engine modifications</button></p></center>";
-
-
-
-          
-     echo"<table class='table table-condensed table-hover table-bordered enginetablemulti'><thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th style='padding-left:30px;'>% addt'l horsepower</th></tr></thead><tbody>";
+	      <h5>Below is a list of engine modifications as well as an average percent gain that modification provides.  Click your modifications OR enter a rear wheel (not flywheel) horsepower number below that you believe is true either from a dyno chart or modification manufacturer claims.</h5></div>
+	      <center><p><button class='btn btn-info' id='showenginetable'>I wish to select my mods from a table and will assume GGC's engine gains are correct</button></p>
+          <p><button class='btn btn-info' id='showrwhptable'>I wish to enter a rear wheel HP number</button></p>
+          <p><button class='btn btn-info' id='hidethebuttons'>I have no engine modifications</button></p></center>
+          <table class='table table-condensed table-bordered enginetablemulti'><thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th style='padding-left:30px;'>% addt'l horsepower</th></tr></thead><tbody>";
+    
     $result = mysql_query("SELECT * FROM `autox_mods_engine` ORDER BY `percent` ASC") or die("Error: " . mysql_error());
     while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
         echo "<tr><Td class='span6' style='padding-left:30px;'>$row[2]</td><td class='span2' id='pointvalue' style='padding-left:30px;'>$row[3] </td><input type='hidden' name='engine_id[$row[0]]' value='false'></tr>";
     }
-     echo"</table><table class='table table-condensed table-bordered enginetablemultiresults'>
-
-    <Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div id='percent' style='display: inline;'>0</div>%</td></tr>
-    <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div id='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
- 
-    echo "</table>";
-    
+    echo"</table><table class='table table-condensed table-bordered enginetablemultiresults'>
+        <Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div class='percent' style='display: inline;'>0</div>%</td></tr>
+        <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div class='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
     $rwhp = round($_SESSION[BHP] * .85);
     $total = round($rwhp + 10);
-    echo "<table class='table table-condensed table-hover table-bordered' id='rwhptable'>
+    echo "<table class='table table-condensed table-bordered' id='rwhptable'>
         <tr id='dynorow'><td class='span6' style='padding-left:30px;'>Your TOTAL rear wheel (not flywheel) horsepower based on dyno or modification manufacturer claims. We think your car has approx <B>$rwhp</b> rwhp, if you added a mod that adds a claimed 10hp, enter <B>$total</b> in this box.</td><td class='span2' style='padding-left:30px;'><input type='text' name='flywheelhp' id='dyno' class='input-small'>hp</td></tr>";
-        
        if ($username) { echo "<tr id='claimrow'><td class='span6' style='padding-left:30px;'>If you entered a RWHP number based on manufacturers claims, please list your engine mods in this box. If you entered a RWHP number based on a dyno, simply type 'dyno' into this box.</td><Td class='span2' style='padding-left:30px;'><textarea name='hpclaim' id='explainhp'></textarea></td></tr>"; }
 
-    echo"
-
-    <Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div id='percent' style='display: inline;'>0</div>%</td></tr>
-    <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div id='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
+    echo"<Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div class='percent' style='display: inline;'>0</div>%</td></tr>
+         <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div class='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
 
     if ($username){
       echo"<div id='differentclass'><br><br><table class='table'><Tr><Td>Want to run your car in a higher or non-competitive class?  Select it here</td><Td><SELECT name='chosenclass' class='span2' id='chosenclass'>
  </SELECT></td></tr></table>";
     
 		if ($usergroup == "admin"){
-		
 			echo"<script>
 			var peoplelist = [";
-	   		
 	   		$result = mysql_query("SELECT * FROM `gy01d_users` WHERE `lastvisitdate` != '0000-00-00 00:00:00'") or die("Error: " . mysql_error());
 	   	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
 		   	   	$escaped = str_replace("'", "", $row[1]);
@@ -322,38 +236,22 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 	   		echo"Admin: Save this classification in someone else's profile</td><td class='span4'><input type='text' class='input-large' id='users' name='alternateuser'  placeholder='Start typing a name...'>";
 	   		echo"</td></tr></table>";
    		}
-    
-    
-    
-    
         echo "</div><button class='btn btn-success' type='submit' id='submitclassification'>Save this classification to my user profile</button>";
     }
     
     echo"</form>";
 }
-
-
 ?>
-
-
 <Br><Br><br>
-
-
-
 </div>  <!--container-->
-
 <div class="navbar navbar-fixed-bottom bottombar" id='finalpoints'></div>
 <script src="js/jquery191min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/selectboxit.js"></script>
-
 <script>
-
-
 function updatefloater(currentvalue,cumulativepoints)
 {
-
     if (!cumulativepoints) {cumulativepoints = 0;}
     var carclass;
     var texttodisplay = currentvalue + cumulativepoints;
@@ -365,8 +263,6 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
     
 }
 ?>
-   
-
    var update = "Total points: " + texttodisplay + " - Class " + carclass;
     $("#finalpoints").text(update);
    if (carclass == 'C') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='B'>B</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
@@ -377,27 +273,19 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
    if (carclass == 'Gonzo') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option>") ;}     
     
 }
-
-
-
 <?php
-
 echo "var enginemods = [";
 $result = mysql_query("SELECT * FROM `autox_engine_levels` WHERE engine_level = \"" . $_SESSION['engine_level'] . "\" AND `lsd` = 'N'") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	echo "['" . $row[0] . "',". $row[3] . "," . $row[4] . "," . $row[2] . "],";
 }
-echo "['Z',0,0,0]];";
-
-
-echo "var enginemodslsd = [";
+echo "['Z',0,0,0]];
+var enginemodslsd = [";
 $result = mysql_query("SELECT * FROM `autox_engine_levels` WHERE engine_level = \"" . $_SESSION['engine_level'] . "\" AND `lsd` = 'Y'") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	echo "['" . $row[0] . "',". $row[3] . "," . $row[4] . "," . $row[2] . "],";
 }
 echo "['Z',0,0,0]];";
-
-
 ?>
 
 var cumulativepoints = 0;
@@ -412,12 +300,8 @@ basepoints = basepoints * 1;
 var currentvalue = 0;
 currentvalue = currentvalue * 1;
 currentvalue = currentvalue + basepoints + pkgpoints + suspvalue;
-
 updatefloater(currentvalue);
-
-
 $(document).ready(function(){
-
 	$('.enginetablemulti').hide();
     $('.enginetablemultiresults').hide();
 	$('#rwhptable').hide();
@@ -426,9 +310,6 @@ $(document).ready(function(){
 	<?php if ($readytoclassify != "Y") { echo"$('#finalpoints').hide();"; }?>
 	$("select").selectBoxIt({});
     $('#differentclass').hide();
-
-	
-
 <?php 
 if ($usergroup == "admin"){ echo "
 	$('#users').typeahead({
@@ -436,18 +317,10 @@ if ($usergroup == "admin"){ echo "
 	});
 ";
 }
-
-
 ?>
-
-
 });
-            
-            
-            
 $('#showenginetable').on('click', function(event) {
 	event.preventDefault();
-	console.log('default ' + event.type + ' prevented');
 	$('.enginetablemulti').show();
     $('.enginetablemultiresults').show();
 	$('#showrwhptable').hide();
@@ -457,12 +330,8 @@ $('#showenginetable').on('click', function(event) {
 	$('#submitclassification').show();
     $('#differentclass').show();	
 });      
-
-
-
 $('#showrwhptable').on('click', function(event) {
 	event.preventDefault();
-	console.log('default ' + event.type + ' prevented');
 	$('#rwhptable').show();
 	$('#showenginetable').hide();
 	$('#showrwhptable').hide();
@@ -472,8 +341,6 @@ $('#showrwhptable').on('click', function(event) {
     $('#differentclass').show();
 
 }); 
-    
-    
 $('#hidethebuttons').on('click', function(event) {
 	event.preventDefault();
 	$('#showenginetable').hide();
@@ -484,9 +351,6 @@ $('#hidethebuttons').on('click', function(event) {
     $('#differentclass').show();
 
 });            
-           
-           
-            
 $('#modstable tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
@@ -512,8 +376,6 @@ $('#modstable tbody tr').on('click', function(event) {
 
     updatefloater(currentvalue);
 });
-
-
 $('#modstablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
@@ -532,9 +394,6 @@ $('#modstablemulti tbody tr').on('click', function(event) {
 
     updatefloater(currentvalue);
 });
-
-
-
 $('.enginetablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
@@ -551,10 +410,7 @@ $('.enginetablemulti tbody tr').on('click', function(event) {
 		        if (cumulativepercent >= enginemodslsd[i][1] && cumulativepercent <= enginemodslsd[i][2]) { engineresult = enginemodslsd[i][3]; }
 		    }
 	    }
-	    console.log("subtrating: " + cumulativepoints + " minus " + engineresult);
 	    cumulativepoints = cumulativepoints - (cumulativepoints - engineresult); 
-
-
     } else {
         $(this).find('input').attr('value','true');           
         $(this).addClass('selected');
@@ -570,28 +426,17 @@ $('.enginetablemulti tbody tr').on('click', function(event) {
 		        if (cumulativepercent >= enginemodslsd[i][1] && cumulativepercent <= enginemodslsd[i][2]) { engineresult = enginemodslsd[i][3]; }
 		    }     
 		 }
-	     console.log("adding: " + cumulativepoints + " plus " + engineresult); 
 	    cumulativepoints = (cumulativepoints + engineresult) - cumulativepoints;        
         
     }
-            
-
-    
-    $('#percent').empty();
-    $('#percent').append(cumulativepercent);
-    $('#enginemodpoints').empty();
-    $('#enginemodpoints').append(cumulativepoints);        
-    
-    
+    $('.percent').empty();
+    $('.percent').append(cumulativepercent);
+    $('.enginemodpoints').empty();
+    $('.enginemodpoints').append(cumulativepoints);        
     updatefloater(currentvalue,cumulativepoints);
-    
 });
-
-
-
 $("#dyno").keyup(function() {
 	var hp= $("#dyno").val()
-	console.log("value: " + hp);
 	<?php 
 	$bhp = $_SESSION['BHP'];
 	if (isset($_SESSION['BHP'])){ echo "var increase = Math.round((((hp/.85) / $bhp)-1) * 100);";} ?>
@@ -600,37 +445,29 @@ $("#dyno").keyup(function() {
 		    for (var i=0;i<parseInt(enginemods.length);i++) {
 	        	if (increase >= enginemods[i][1] && increase <= enginemods[i][2]) { 
 	        		engineresult = enginemods[i][3];
-	        		console.log("adding " + engineresult); 
 	        	}
 	        } 
-	        $('#percent').empty();
-	        $('#percent').append(increase);
-	        $('#enginemodpoints').empty();
-	        $('#enginemodpoints').append(engineresult);  
+	        $('.percent').empty();
+	        $('.percent').append(increase);
+	        $('.enginemodpoints').empty();
+	        $('.enginemodpoints').append(engineresult);  
             if ($('#explainhp').val() == '') { 
                 $('#explainhp').css('border', 'solid 1px red'); 
                 $('#explainhp').attr("placeholder", "Required");
             } 
 	        updatefloater(currentvalue,engineresult);	
             $('#dynorow').addClass('selected');      
-
-	           	
 	} else {
 
-	        $('#percent').empty();
-	        $('#percent').append("0");
-	        $('#enginemodpoints').empty();
-	        $('#enginemodpoints').append("0"); 
+	        $('.percent').empty();
+	        $('.percent').append("0");
+	        $('.enginemodpoints').empty();
+	        $('.enginemodpoints').append("0"); 
             $('#dynorow').removeClass('selected');  
             $('#explainhp').css('border', ''); 
             $('#explainhp').attr("placeholder", ""); 
 	        updatefloater(currentvalue);	 
 	}
 });
-
-
-
-
-
 </script>
 </body></html>
