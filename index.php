@@ -79,7 +79,7 @@ if (mysql_num_rows($result) == "0"){
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 		$mynumber = $row[0];
 	}
-	echo"<p><img src='generatepic.php?number=$mynumber' class='firstimg'></p> If you'd like a different number, choose it here: "; 
+	echo"<p><img src='generatepic.php?number=$mynumber' class='firstelement'></p> If you'd like a different number, choose it here: "; 
 }
 	echo"<select name='drivernumber' class='span1' id='numberform'><option value=''></option>";
 	$result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());

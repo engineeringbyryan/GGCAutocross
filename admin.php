@@ -7,7 +7,12 @@ include('auth.php');
 <html>
 
 <head>
+	<meta name="viewport" content="initial-scale=1.0"> 
+    <script src="js/stay_standalone.js" type="text/javascript"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="autoxicon.png" />
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
     <link href="css/colorbox.css" rel="stylesheet" media="screen">
      <style>
       body {
