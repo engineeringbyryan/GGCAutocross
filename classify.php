@@ -9,6 +9,8 @@ include('auth.php');
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <meta charset="UTF-8">
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
      <style>
         table { cursor:pointer; }
         .table tbody tr.selected td{
@@ -27,10 +29,18 @@ include('auth.php');
       .tablehead {
         background-color: #cccccc;
       }
+      @media (max-width: 979px) {
+        .navbar-fixed-top,
+        .navbar-fixed-bottom {
+        position: fixed;
+        margin-left: 0px;
+        margin-right: 0px;
+      }
+}
     </style>
     <title>GGC BMW CCA Autocross page</title>
-    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+    
+    
     <link href="css/selectboxit.css" rel="stylesheet" media="screen">
 </head>
 <body>
