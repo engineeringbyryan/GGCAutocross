@@ -7,10 +7,16 @@ include('auth.php');
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="viewport" content="initial-scale=1.0"> 
+    <script src="js/stay_standalone.js" type="text/javascript"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="autoxicon.png" />
     <meta charset="UTF-8">
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="css/add2home.css">
+    <script type="application/javascript" src="js/add2home.js"></script>
+    
      <style>
         table { cursor:pointer; }
         .table tbody tr.selected td{
@@ -32,13 +38,14 @@ include('auth.php');
       @media (max-width: 979px) {
         .navbar-fixed-top,
         .navbar-fixed-bottom {
-        position: fixed;
-        margin-left: 0px;
-        margin-right: 0px;
+            position: fixed;
+            margin-left: 0px;
+            margin-right: 0px;
       }
-}
+
+        }
     </style>
-    <title>GGC BMW CCA Autocross page</title>
+    <title>Classify</title>
     
     
     <link href="css/selectboxit.css" rel="stylesheet" media="screen">
@@ -297,6 +304,11 @@ var currentvalue = 0;
 currentvalue = currentvalue * 1;
 currentvalue = currentvalue + basepoints + pkgpoints + suspvalue;
 updatefloater(currentvalue);
+
+
+
+
+
 $(document).ready(function(){
 	$('.enginetablemulti').hide();
     $('.enginetablemultiresults').hide();
@@ -315,6 +327,10 @@ if ($usergroup == "admin"){ echo "
 }
 ?>
 });
+
+
+
+
 $('#showenginetable').on('click', function(event) {
 	event.preventDefault();
 	$('.enginetablemulti').show();

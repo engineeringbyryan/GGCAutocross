@@ -27,7 +27,9 @@ if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
 <!DOCTYPE html>
 <html>
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="viewport" content="initial-scale=1.0"> 
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="autoxicon.png" />
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/colorbox.css" rel="stylesheet" media="screen">
     <meta charset="UTF-8">
@@ -36,17 +38,26 @@ if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <title>GGC BMW CCA Autocross page</title>
+    <title>Show Cars</title>
     <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
         <style>
         body {
          	background-image: url('img/satinweave.png')  /*thanks SubtlePatterns.com */
         }
+         @media (max-width: 979px) {
+        	.navbar-fixed-top,
+        	.navbar-fixed-bottom {
+        		position: fixed;
+       			margin-left: 0px;
+        		margin-right: 0px;
+      		}
+      		.firstelement { padding-top: 60px; }
+      	}
     </style>
 </head>
 <body>
 <?php include('navbar.html');?>
-<div class="container">
+<div class="container firstelement">
 <?php
   $result = mysql_query("SELECT autox_numbers.drivernumber,gy01d_users.name,autox_classifications.car_year,autox_classifications.car_model,autox_classifications.points,autox_classifications.class,autox_classifications.pk FROM autox_classifications,gy01d_users,autox_numbers WHERE gy01d_users.username = autox_classifications.username and gy01d_users.username = autox_numbers.username and autox_classifications.active = 'Y' ORDER BY autox_classifications.points desc, autox_classifications.class, gy01d_users.name") or die("Error: " . mysql_error());
   	echo"<h4>All Classified Cars</h4>

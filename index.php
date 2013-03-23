@@ -7,7 +7,10 @@ include('auth.php');
 <html>
 
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="viewport" content="initial-scale=1.0"> 
+    <script src="js/stay_standalone.js" type="text/javascript"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="autoxicon.png" />
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
     <link href="css/colorbox.css" rel="stylesheet" media="screen">
@@ -32,6 +35,15 @@ include('auth.php');
   		}
   	    .tablehead {
         	background-color: #cccccc;
+      	}
+      	@media (max-width: 979px) {
+        	.navbar-fixed-top,
+        	.navbar-fixed-bottom {
+        		position: fixed;
+       			margin-left: 0px;
+        		margin-right: 0px;
+      		}
+      		.firstelement { padding-top: 60px; }
       	}
     </style>
 </head>
@@ -67,7 +79,7 @@ if (mysql_num_rows($result) == "0"){
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 		$mynumber = $row[0];
 	}
-	echo"<p><img src='generatepic.php?number=$mynumber'></p> If you'd like a different number, choose it here: "; 
+	echo"<p><img src='generatepic.php?number=$mynumber' class='firstimg'></p> If you'd like a different number, choose it here: "; 
 }
 	echo"<select name='drivernumber' class='span1' id='numberform'><option value=''></option>";
 	$result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());
