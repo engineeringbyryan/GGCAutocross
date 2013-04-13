@@ -7,7 +7,9 @@ if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
 	$result = mysql_query("SELECT autox_numbers.drivernumber,gy01d_users.name,autox_classifications.car_year,autox_classifications.car_model,autox_classifications.points,autox_classifications.class,autox_classifications.pk FROM autox_classifications,gy01d_users,autox_numbers WHERE gy01d_users.username = autox_classifications.username and gy01d_users.username = autox_numbers.username and autox_classifications.active = 'Y' ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 		$capitalizedname = ucwords($row[1]);
-		$export = $export . "\"$row[0]\", $capitalizedname, $row[2], $row[3], $row[4], $row[5]\n";
+		$namearray = explode(" ", $capitalizedname);
+		//if ($row[2] == "") { $car = explode(" ", $row[3]);} else { $car[0] = $row[2]; $car[1] = $row[3];}
+		$export = $export . "\"$row[0]\", $namearray[0], $namearray[1] $namearray[2], $row[2], $row[3], $row[4], $row[5]\n";
 	}
 		file_put_contents($file, $export);
 		header('Content-Description: File Transfer');

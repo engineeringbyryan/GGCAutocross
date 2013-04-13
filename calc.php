@@ -15,7 +15,11 @@ $cardesc = $_POST[cardesc];
 
 if ($nonbmw == "Y") {
 	$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
-	$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$username', 'X', '', '', '$cardesc', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
+	$carmodel = strstr($cardesc, " ");
+
+	$year = strstr($cardesc, " ", true); // As of PHP 5.3.0
+
+	$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$username', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
 	togoto(); 
 
 }

@@ -81,7 +81,7 @@ if ($carid == "") {
     echo "</SELECT></div></form>";
 }
 if (($carid == "") && ($year == "") && ($username != "")){
-	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' placeholder='2000 Mazda Miata'> <button type='submit' class='btn btn-primary'>Submit</button></form>";
+	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' id='xclassinput' placeholder='2000 Mazda Miata'> <button type='submit' class='btn btn-primary' id='nonbmwsubmit'>Submit</button></form><div id='nonbmwhelper' class='badge badge-important'></div>";
 }
 if ($year != "" && $carid == "") {
     sqlconnect();
@@ -94,6 +94,8 @@ if ($year != "" && $carid == "") {
     }
     mysql_free_result($result);
     echo "</SELECT></div></form>";
+
+
 }
 if ($year != "" && $carid != "" && $wheelid == "") {
     sqlconnect();
@@ -310,6 +312,21 @@ updatefloater(currentvalue);
 
 
 $(document).ready(function(){
+  
+    $('#xclassinput').keyup(function() {
+        var nonbmwyear = $(this).val().substr(0,2);
+        if ((nonbmwyear == '19') || (nonbmwyear == '20'))  {
+           $('#nonbmwsubmit').show();
+        }   else {
+            if ($(this).val().length > 2) {
+                $('#nonbmwhelper').text('4 digit year required');
+            } else {
+                $('#nonbmwhelper').text('');
+            }
+
+        }
+    });
+    $('#nonbmwsubmit').hide();
 	$('.enginetablemulti').hide();
     $('.enginetablemultiresults').hide();
 	$('#rwhptable').hide();
