@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set("America/Los_Angeles"); 
+
 
 $result = mysql_query("SELECT * FROM autox_close") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
@@ -11,7 +13,6 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 $result = mysql_query("SELECT * FROM autox_dates") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	$autocross = strtotime($row[1]);
-//	echo "autocross: $autocross close date: $close(" . strtotime("$close", $autocross) . ")  open date: " . strtotime("$open", $autocross);
 	if ((time() >= strtotime("$close", $autocross)) && (time() <= strtotime("$open", $autocross))) 	{
 		$closemsg = "<div class='alert alert-error'><button type='button' class='close' data-dismiss='alert'>&times;</button>$msg</div>";
 	}
@@ -42,8 +43,6 @@ if ($_COOKIE[GGCAutoXAuthType] == "local"){
 	}
 	if ($creds[1] ==  $breakpass[0]){
 		if (!$closemsg) {$username = $creds[0];}
-
-//		echo"SELECT * FROM gy01d_user_usergroup_map WHERE `user_id` = '$row[3]' AND `group_id` = '11'";
 		$result = mysql_query("SELECT * FROM gy01d_user_usergroup_map WHERE `user_id` = '$id' AND `group_id` = '11'") or die("Error: " . mysql_error());
 		if (mysql_num_rows($result) != "0") { $usergroup = "admin";}
 	} else {
@@ -54,6 +53,22 @@ if ($_COOKIE[GGCAutoXAuthType] == "local"){
 	}
 		
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 $loginname = $_POST[loginname];

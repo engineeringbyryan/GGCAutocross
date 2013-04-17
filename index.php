@@ -2,6 +2,11 @@
 include('functions.php');
 sqlconnect();
 include('auth.php');
+if ($_GET[user]) {
+	if ($usergroup == "admin"){
+		$username = $_GET[user];
+	}
+}	
 ?>
 <!DOCTYPE html>
 <html>
@@ -74,7 +79,7 @@ A typical signup process for a <u>first timer</u> is:
 } else {
 $result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '$username' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());
 if (mysql_num_rows($result) == "0"){
-	echo"<span class='badge badge-important'>You have not chosen a number.  You must choose a number to compete!</span>  Choose a number here: ";
+	echo"<br><Br><span class='badge badge-important'>You have not chosen a number.  You must choose a number to compete!</span><br><br>  Choose a number here: ";
 } else {
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 		$mynumber = $row[0];
@@ -108,7 +113,7 @@ if (mysql_num_rows($result) != "0") {
 	echo"</tbody></table><p><i>You cannot edit an existing classification. To make changes, you must delete the car and re-classify.</i></p>";
 }
 
-if (!$activebutton){ echo"<span class='badge badge-important' id='classwarning'>Warning: You do not have an active car classification</span><br>"; }
+if (!$activebutton){ echo"<br><Br><span class='badge badge-important' id='classwarning'>Warning: You do not have an active car classification</span><br><br>"; }
 	echo"<br><a href='classify.php' class='btn btn-info'>Classify your own car</a> ";
 	echo" <a href='#' class='btn btn-info' id='otherpickerbutton'>Copy someone else's classification if you will be driving their car</a>";
 	echo"<div id='otherpicker'>

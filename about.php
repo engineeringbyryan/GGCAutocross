@@ -1,5 +1,6 @@
 <?php
 include('functions.php');
+sqlconnect();
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,6 +29,28 @@ include('functions.php');
 <p>The system has been primarily developed by Matt Visser, Jason Sams, Jeff Roberts, and Kris Linquist.</p>
 <p>The online system has been coded by Kris Linquist @klinquist (http://www.linquist.com) using php, javascript, and jquery.  It is available open-source: <a href="http://www.github.com/klinquist/GGCAutocross">http://www.github.com/klinquist/GGCAutocross</a></p>
 <p>The system is revised periodically based on autocross results with known drivers.</p>
+
+<p>Here is a link to a full documentation of the system and its points: <a href="http://www.ggcbmwcca.org/autocross/2013-GGCAutocrossClassificationSystemDocumentation.pdf">http://www.ggcbmwcca.org/autocross/2013-GGCAutocrossClassificationSystemDocumentation.pdf</a></p>
+
+<p>The point to class table can be found below.</p>
+
+<table class="table table-condensed">
+<thead>
+
+<th>
+  <tr><td>Class</td><td>From</td><td>To</td><td>Adjusted</td><td>Adjustment formula</td></tr>
+</th>
+</thead>
+<tbody>
+
+<?php
+$result = mysql_query("SELECT * FROM autox_classes") or die("Error: " . mysql_error());
+while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+     echo"<tr><td>$row[0]</td><td>$row[1]</td><td>$row[2]</td><td>$row[3]</td><td>$row[4]</td></tr>";
+}
+?>
+
+</tbody>
 </div>  <!--container-->
 <?php include ('bottombar.html'); ?>
 <script src="js/bootstrap.min.js"></script>

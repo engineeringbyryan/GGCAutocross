@@ -12,25 +12,31 @@ $hpclaim = mysql_real_escape_string($_POST['hpclaim']);
 $nonbmw = $_GET[nonbmw];
 $cardesc = $_POST[cardesc];
 
-
-if ($nonbmw == "Y") {
-	$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
-	$carmodel = strstr($cardesc, " ");
-
-	$year = strstr($cardesc, " ", true); // As of PHP 5.3.0
-
-	$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$username', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
-	togoto(); 
-
-}
-
-
 $alternateuser = $_POST['alternateuser'];
 if ($alternateuser != ""){
 	$pattern = '/\((.*)\)/';
 	preg_match($pattern, $alternateuser, $matches, PREG_OFFSET_CAPTURE);
 	$alternateuser = $matches[1][0];
 }
+
+
+if ($nonbmw == "Y") {
+	$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
+	$carmodel = strstr($cardesc, " ");
+	$year = strstr($cardesc, " ", true); // As of PHP 5.3.0
+	if ($alternateuser){
+		$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$alternateuser' AND `active` = 'Y'");
+		$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$alternateuser', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
+	} else {
+		$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
+		$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$username', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
+	}
+	togoto(); 
+
+}
+
+
+
 
 
 //echo "$username";

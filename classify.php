@@ -81,7 +81,21 @@ if ($carid == "") {
     echo "</SELECT></div></form>";
 }
 if (($carid == "") && ($year == "") && ($username != "")){
-	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' id='xclassinput' placeholder='2000 Mazda Miata'> <button type='submit' class='btn btn-primary' id='nonbmwsubmit'>Submit</button></form><div id='nonbmwhelper' class='badge badge-important'></div>";
+	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' id='xclassinput' placeholder='2000 Mazda Miata'>";
+        if ($usergroup == "admin"){
+            echo"<script>
+            var peoplelist = [";
+            $result = mysql_query("SELECT * FROM `gy01d_users` WHERE `lastvisitdate` != '0000-00-00 00:00:00'") or die("Error: " . mysql_error());
+            while ($row = mysql_fetch_array($result, MYSQL_NUM)) {  
+                $escaped = str_replace("'", "", $row[1]);
+                echo"'$escaped ($row[2])',";
+            }
+            echo"'Fake User (fakeuser)'];
+            </script>";
+            echo"<div class='nonbmwsubmit'>Admin: Save this classification in someone else's profile: <input type='text' class='input-large' id='users' name='alternateuser'  placeholder='Start typing a name...'></div>";
+        }
+        echo"<button type='submit' class='btn btn-primary nonbmwsubmit' style='display:inline;'>Submit</button></form><div id='nonbmwhelper' class='badge badge-important'></div>";
+
 }
 if ($year != "" && $carid == "") {
     sqlconnect();
@@ -316,7 +330,7 @@ $(document).ready(function(){
     $('#xclassinput').keyup(function() {
         var nonbmwyear = $(this).val().substr(0,2);
         if ((nonbmwyear == '19') || (nonbmwyear == '20'))  {
-           $('#nonbmwsubmit').show();
+           $('.nonbmwsubmit').show();
         }   else {
             if ($(this).val().length > 2) {
                 $('#nonbmwhelper').text('4 digit year required');
@@ -326,7 +340,7 @@ $(document).ready(function(){
 
         }
     });
-    $('#nonbmwsubmit').hide();
+    $('.nonbmwsubmit').hide();
 	$('.enginetablemulti').hide();
     $('.enginetablemultiresults').hide();
 	$('#rwhptable').hide();

@@ -67,7 +67,20 @@ if ($usergroup == "admin"){
 	}
 	
 	echo"
-	<br><Br><br>
+	<Br><Br>
+
+	Go to main page as someone else: <select id='alternateuser'>";
+
+	$result = mysql_query("SELECT * FROM `gy01d_users` ORDER BY `name` ASC") or die("Error: " . mysql_error());
+	   	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
+		   	   	$escaped = str_replace("'", "", $row[1]);
+	   	   		echo"<option value='$row[2]'>$escaped ($row[2])</option>";
+
+	}
+	
+	echo"</select><br><Br><br>
+
+
 	<script src='http://code.jquery.com/jquery-latest.js'></script>
 <script src='js/bootstrap.min.js'></script>
 <script src='js/bootstrap-typeahead.js'></script>
@@ -131,7 +144,15 @@ $('.opensystem').click(function(event){
 });
 
 
-</script>
+$('#alternateuser').change(function(event){
+	var theuser = $(this).val();
+	//alert(theuser);
+	window.location = "index.php?user=" + theuser;
+});
 
+
+
+</script>
+<Br><Br><br>
 </body>
 </html>
