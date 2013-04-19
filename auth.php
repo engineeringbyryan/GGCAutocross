@@ -50,6 +50,7 @@ if ($_COOKIE[GGCAutoXAuthType] == "local"){
 		unset($username);
 		unset($fullname);
 		$warning = "<div class='alert alert-error'>Incorrect login.  <a href='http://www.ggcbmwcca.org/component/comprofiler/lostpassword' target='_blank'>Lost username or password?</a></div>";
+		writelog($creds[0], "Incorrect login attempt");
 	}
 		
 }
@@ -93,7 +94,7 @@ if ($loginname){
 		unset($fullname);
 		unset($usergroup);
 		$warning = "<div class='alert alert-error'>Incorrect login.  <a href='http://www.ggcbmwcca.org/component/comprofiler/lostpassword' target='_blank'>Lost username or password?</a></div>";
-		
+		writelog($loginname, "Incorrect login attempt");
 	}
 } 
 

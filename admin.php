@@ -85,26 +85,16 @@ if ($usergroup == "admin"){
 <script src='js/bootstrap.min.js'></script>
 <script src='js/bootstrap-typeahead.js'></script>
 <script src='js/jquery.colorbox.js'></script>";
-		
-
-
-} else {
-	
-	echo"You're not an admin!";
-}		
 ?>
-<Br><Br>
-</div>  <!--container-->
-
 <script>
 
+var username = "<?php echo $creds[0];?>";
 
 $('.deldate').click(function(event){
 	var trid = $(this).closest('tr').attr('id');	
 	//alert ("del car where id = " + trid);
-	$.get('updatecars.php?action=deldate&id='+trid, function(data) {
+	$.get('updatecars.php?action=deldate&id='+trid+'&username='+username, function(data) {
 		location.reload();
-		
 	});
 
 });
@@ -112,7 +102,7 @@ $('.deldate').click(function(event){
 $('.adddate').click(function(event){
 	value = $("#datetoadd").val(); 
 	locale = $("#localetoadd").val();
-	$.get('updatecars.php?action=adddate&id='+value+'&username='+locale, function(data) {
+	$.get('updatecars.php?action=adddate&id='+value+'&locale='+locale+'&username='+username, function(data) {
 		location.reload();
 	});
 });
@@ -131,14 +121,14 @@ $('.updatetimes').click(function(event){
 
 $('.closesystem').click(function(event){
 	closemsg = $("#closemessage").val(); 
-	$.get('updatecars.php?action=closesystem&id='+closemsg, function(data) {
+	$.get('updatecars.php?action=closesystem&id='+closemsg+'&username='+username, function(data) {
 		location.reload();
 	});
 });
 
 $('.opensystem').click(function(event){
 	closemsg = $("#closemessage").val(); 
-	$.get('updatecars.php?action=opensystem', function(data) {
+	$.get('updatecars.php?action=opensystem&username='+username, function(data) {
 		location.reload();
 	});
 });
@@ -151,8 +141,19 @@ $('#alternateuser').change(function(event){
 });
 
 
-
 </script>
+<?php		
+
+
+} else {
+	
+	echo"You're not an admin!";
+}		
+?>
+<Br><Br>
+</div>  <!--container-->
+
+
 <Br><Br><br>
 </body>
 </html>

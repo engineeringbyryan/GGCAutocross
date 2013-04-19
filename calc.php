@@ -27,9 +27,11 @@ if ($nonbmw == "Y") {
 	if ($alternateuser){
 		$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$alternateuser' AND `active` = 'Y'");
 		$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$alternateuser', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
+		writelog($username, "Admin classified an X class car ($year $carmodel) as this user");
 	} else {
 		$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
 		$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$username', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
+		writelog($username, "Classified an X class car ($year $carmodel)");
 	}
 	togoto(); 
 
@@ -147,10 +149,11 @@ if ($alternateuser){
 	echo"SAVING to $alternateuser";
 	$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$alternateuser' AND `active` = 'Y'");
 	$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$alternateuser', '$class', '$totalpoints', '$year', '$car', '$serialized_car', '$serialized_mods', '$serialized_engine', '$flywheelhp', now(), 'Y', '$hpclaim')") or die("Error: " . mysql_error());
+	writelog($username, "Admin classified a car ($year $car $totalpoints points) as this user");
 } else {
 	$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
 	$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$username', '$class', '$totalpoints', '$year', '$car', '$serialized_car', '$serialized_mods', '$serialized_engine', '$flywheelhp', now(), 'Y', '$hpclaim')") or die("Error: " . mysql_error());
-	
+	writelog($username, "Classified a car ($year $car $totalpoints points)");
 }
 togoto();  
 
