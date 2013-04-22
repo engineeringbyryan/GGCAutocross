@@ -138,8 +138,8 @@ if (!$activebutton){ echo"<br><Br><span class='badge badge-important' id='classw
 		$result = mysql_query("SELECT * FROM autox_dates ORDER BY `autoxdate` ASC") or die("Error: " . mysql_error());	
 		$open = 0;
 		while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-			$open++;
-			if (time() > strtotime("$row[2] 10:00AM")) {
+			if (time() < strtotime("$row[1] 10:00AM")) {
+				$open++;
 				$thedate = date("D, M j", strtotime($row[1]));
 				echo"<li><h6>$thedate<br>&nbsp;&nbsp;$row[2]";
 				if ((!$closemsg) && ($open == 1)){

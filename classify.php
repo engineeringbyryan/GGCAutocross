@@ -191,6 +191,22 @@ if ($year != "" && $carid != "" && $wheelid != "") {
         if ($row[0] == "12"){
 	        if ($_SESSION['opt_rear_wheel_width']) { echo"<h5>We think your rear wheels are ". $_SESSION['opt_rear_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; } else { echo"<h5>We think your rear wheels are ". $_SESSION['rear_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; }
         }
+        $showlsd = "";
+        if ($row[0] == "13"){
+         
+            if ($_SESSION['LSD_standard'] == "N") { 
+                    echo "<h5>We don't think your car came from the factory with a limited slip differential.  If we are incorrect OR if you added an LSD, select this option.</h5>"; 
+                    
+            } else { 
+                    echo "<h5>We think your car came with a limited slip differential.  These points are included in your base point calculation.</h5>"; 
+                    $showlsd = "N";
+                    
+            }
+        }
+        
+
+        if ($showlsd != "N") {
+    
         $query = "SELECT * FROM `autox_modifications` WHERE `category_id` = '$row[0]'";
         $anotherresult = mysql_query($query) or die("Error: " . mysql_error());
         if ($row[7] == "Y") { //allow a multiple selections on certain categories
@@ -220,6 +236,10 @@ if ($year != "" && $carid != "" && $wheelid != "") {
             }
         }
         echo "</tbody></table>";
+ 
+        }
+
+
     }
     echo "<div id='enginemodificationsheader'><h4>Engine modifications</h4>
 	      <h5>Below is a list of engine modifications as well as an average percent gain that modification provides.  Click your modifications OR enter a rear wheel (not flywheel) horsepower number below that you believe is true either from a dyno chart or modification manufacturer claims.</h5></div>
