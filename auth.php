@@ -2,6 +2,8 @@
 date_default_timezone_set("America/Los_Angeles"); 
 
 
+
+
 $result = mysql_query("SELECT * FROM autox_close") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	$close = $row[1];
@@ -32,84 +34,67 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 }
 
 
-
-if ($_COOKIE[GGCAutoXAuthType] == "local"){
-	$creds = explode(":", $_COOKIE[GGCAutoXCreds]);
-	$result = mysql_query("SELECT name,username,password,id FROM gy01d_users WHERE `username` = '$creds[0]'") or die("Error: " . mysql_error());
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-		$breakpass = split(":", $row[2]);
-		$id = $row[3];
-		$fullname = $row[0];
-	}
-	if ($creds[1] ==  $breakpass[0]){
-		if (!$closemsg) {$username = $creds[0];}
-		$result = mysql_query("SELECT * FROM gy01d_user_usergroup_map WHERE `user_id` = '$id' AND `group_id` = '11'") or die("Error: " . mysql_error());
-		if (mysql_num_rows($result) != "0") { $usergroup = "admin";}
-	} else {
-		unset($usergroup);
-		unset($username);
-		unset($fullname);
-		$warning = "<div class='alert alert-error'>Incorrect login.  <a href='http://www.ggcbmwcca.org/component/comprofiler/lostpassword' target='_blank'>Lost username or password?</a></div>";
-		writelog($creds[0], "Incorrect login attempt");
-	}
-		
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+define('WP_USE_THEMES', false);
+require("../new_html/wp-load.php");
 
 
 $loginname = $_POST[loginname];
 $loginpassword = $_POST[loginpassword];
-if ($loginname){
-	$result = mysql_query("SELECT name,username,password,id FROM gy01d_users WHERE `username` = '$loginname'") or die("Error: " . mysql_error());
-	
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-		$fullname = $row[0];
-		$breakpass = explode(":", $row[2]);
-		$id = $row[3];
-	}
-	
-	if (md5($loginpassword . $breakpass[1]) == $breakpass[0]){
-		setcookie("GGCAutoXAuthType", "local", time()+60*60*24*365);
-		setcookie("GGCAutoXCreds", $loginname . ":" . md5($loginpassword . $breakpass[1]), time()+60*60*24*365);	
-		if (!$closemsg) {$username = $loginname;}
-		$result = mysql_query("SELECT * FROM gy01d_user_usergroup_map WHERE `user_id` = '$id' AND `group_id` = '11'") or die("Error: " . mysql_error());
-		if (mysql_num_rows($result) != "0") { $usergroup = "admin";}
-	} else {
-		unset($username);
-		unset($fullname);
-		unset($usergroup);
-		$warning = "<div class='alert alert-error'>Incorrect login.  <a href='http://www.ggcbmwcca.org/component/comprofiler/lostpassword' target='_blank'>Lost username or password?</a></div>";
-		writelog($loginname, "Incorrect login attempt");
-	}
-} 
 
-if (!$closemsg) { $displaymsg = "<div class='alert alert-error'><button type='button' class='close' data-dismiss='alert'>&times;</button>In order to save a classification or choose a number, you must be logged in.<Br><Br>
-<form class='form-inline' action='$_SERVER[PHP_SELF]' method='post'><input type='text' class='input-medium' placeholder='Login name' name='loginname'> <input type='password' class='input-medium' placeholder='Password' name='loginpassword'> <button type='submit' class='btn btn-primary'>Login</button> <a href='http://www.ggcbmwcca.org/component/comprofiler/registers' class='btn btn-link' target='_blank'>Create Account</a></form>
-</div>"; } else { $displaymsg = $closemsg; }
+if ($loginname){
+	$creds = array();
+	$creds['user_login'] = $loginname;
+	$creds['user_password'] = $loginpassword;
+	$creds['remember'] = true;
+	$user = wp_signon( $creds, false );
+	$userID = $user->ID;
+	wp_set_current_user( $userID, $user_login );
+	wp_set_auth_cookie( $userID, true, false );
+	do_action( 'wp_login', $user_login );
+
+
+	if (is_user_logged_in()) {
+			$username = $user->user_login;
+			if ($username == "klinquist") { $usergroup = "admin";}
+			if ($username == "jeffroberts") { $usergroup = "admin";}
+			if ($username == "TheCarousel") { $usergroup = "admin";}
+			if ($username == "MattV") { $usergroup = "admin";}					
+
+	} else {
+			
+
+			unset($username);
+			unset($fullname);
+			unset($usergroup);
+			echo "<div class='alert alert-error'>Incorrect login.   You may be locked out for too many attempts. <a href='http://ggcbmwcca.org/new_html/wp-login.php' target='_blank'>Go here</a> to see a more detailed error or to reset your password.</div>";
+			writelog($loginname, "Incorrect login attempt");
+	} 
+
+}
+
+
+if (is_user_logged_in()) {
+		global $current_user;
+		global $username;
+		get_currentuserinfo();
+		$username = $current_user->user_login;
+		/* echo"logged in as $username"; */
+		if ($username == "klinquist") { $usergroup = "admin";}
+		if ($username == "jeffroberts") { $usergroup = "admin";}
+		if ($username == "TheCarousel") { $usergroup = "admin";}
+		if ($username == "MattV") { $usergroup = "admin";}		
+}
 
 
 function loginform() {
+	if (!is_user_logged_in()) {
+		global $closemsg;
+		if (!$closemsg) { echo "<div class='alert alert-error'><button type='button' class='close' data-dismiss='alert'>&times;</button>In order to save a classification or choose a number, you must be logged in.<Br><Br>
+		<form class='form-inline' action='$_SERVER[PHP_SELF]' method='post'><input type='text' class='input-medium' placeholder='Login name' name='loginname'> <input type='password' class='input-medium' placeholder='Password' name='loginpassword'> <button type='submit' class='btn btn-primary'>Login</button> <a href='http://ggcbmwcca.org/new_html/wp-login.php?action=register' class='btn btn-link' target='_blank'>Create Account</a></form>
+		</div>"; } else { echo "$closemsg"; }
+}
+
 	
-		global $warning;
-		global $displaymsg;
-		echo "$warning";
-		echo "$displaymsg";
-		
 
 }
 

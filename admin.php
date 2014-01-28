@@ -35,7 +35,7 @@ include('auth.php');
 <div class="container">
 <?php 
 if ($usergroup == "admin"){
-	echo"<a href='showcars.php?export=Y' class='btn btn-primary'>Download autocross export</a><br>";
+	echo"<a href='showcars.php?export=Y' class='btn btn-primary'>Download autocross export</a> <a href='showcars.php?export=Y&tds=Y' class='btn btn-primary'>Download autocross export for TDS</a><br>";
 	echo"<h3>Autocross dates</h3>
 	<Table class='table table-condensed table-striped'>
 	<thead><th>Date</th><th>Location</th><th>Action</th></thead>
@@ -71,10 +71,10 @@ if ($usergroup == "admin"){
 
 	Go to main page as someone else: <select id='alternateuser'>";
 
-	$result = mysql_query("SELECT * FROM `gy01d_users` ORDER BY `name` ASC") or die("Error: " . mysql_error());
+	$result = mysql_query("SELECT * FROM `wp_users` ORDER BY `display_name` ASC") or die("Error: " . mysql_error());
 	   	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
-		   	   	$escaped = str_replace("'", "", $row[1]);
-	   	   		echo"<option value='$row[2]'>$escaped ($row[2])</option>";
+		   	   	$escaped = str_replace("'", "", $row[9]);
+	   	   		echo"<option value='$row[1]'>$escaped ($row[1])</option>";
 
 	}
 	

@@ -3,6 +3,7 @@ session_start();
 include('functions.php');
 sqlconnect();
 include('auth.php');
+sqlconnect();
 
 
 $carid = $_SESSION['car_id'];
@@ -143,7 +144,7 @@ if (!$_POST['class']) {
 	}
 }
 
-if ($chosenclass != "") { $class = $chosenclass; if ($chosenclass == "Gonzo"){ $totalpoints="80";}}
+//if ($chosenclass != "") { $class = $chosenclass; if ($chosenclass == "Gonzo"){ $totalpoints="80";}}
 
 if ($alternateuser){
 	echo"SAVING to $alternateuser";

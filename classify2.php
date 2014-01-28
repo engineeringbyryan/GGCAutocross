@@ -12,8 +12,8 @@ include('auth.php');
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="apple-touch-icon" href="autoxicon.png" />
     <meta charset="UTF-8">
-    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/add2home.css">
     <script type="application/javascript" src="js/add2home.js"></script>
     
@@ -44,13 +44,70 @@ include('auth.php');
       }
 
         }
+        
+        .twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+  margin-bottom: 0;
+}
+
+.tt-dropdown-menu {
+  min-width: 160px;
+  margin-top: 2px;
+  padding: 5px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.2);
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding;
+          background-clip: padding-box;
+}
+
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+  color: #fff;
+  background-color: #0081c2;
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
+}
+
+.tt-suggestion.tt-is-under-cursor a {
+  color: #fff;
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
+        
+        
     </style>
     <title>Classify</title>
     
     
-    <link href="css/selectboxit.css" rel="stylesheet" media="screen">
+<!--     <link href="css/selectboxit.css" rel="stylesheet" media="screen"> -->
 </head>
 <body>
+<script src="js/jquery191min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<!-- <script src="js/selectboxit.js"></script> -->
+<script src="js/typeahead.min.js"></script>
 <?php include('navbar.html'); ?>
 <div class="container">
     <div id="floatDiv"></div>
@@ -65,11 +122,17 @@ $suspvalue = 0;
 if ($carid == "") {
 	$_SESSION = array();
     echo "
-    <form id='step1' action='$_SERVER[PHP_SELF]' method='post' name='year'>
-    <p>Have a BMW or Mini?</p>
-    <div class='input-append'>
-     <SELECT name='year' onchange='this.form.submit()'>
-    <option value=''>Select Year</option>";
+    
+    
+    
+    <form id='step1' action='$_SERVER[PHP_SELF]' method='post' name='year' class='form-horizontal' role='form'>
+    <div class='form-group'>
+    	
+    	<label for='chooseyear' class='col-lg-2 control-label'>Have a BMW or Mini?</label>
+
+		<div class='col-lg-4'>
+			<SELECT name='year' id='chooseyear' class='form-control' onchange='this.form.submit()'>
+				<option value=''>Select Year</option>";
     if ($year != "") {
         echo "<option selected='$year'>$year</option>";
     } //if year has already been slected, make it the default value
@@ -78,21 +141,15 @@ if ($carid == "") {
     for ($i = $currentyear; $i >= 1960; $i--) {
         echo "<option value='$i'>$i</option>";
     }
-    echo "</SELECT></div></form>";
+    echo "</SELECT>
+    	</div>
+    </div>
+    </form>";
 }
 if (($carid == "") && ($year == "") && ($username != "")){
 	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' id='xclassinput' placeholder='2000 Mazda Miata'>";
         if ($usergroup == "admin"){
-            echo"<script>
-            var peoplelist = [";
-            $result = mysql_query("SELECT * FROM `gy01d_users` WHERE `lastvisitdate` != '0000-00-00 00:00:00'") or die("Error: " . mysql_error());
-            while ($row = mysql_fetch_array($result, MYSQL_NUM)) {  
-                $escaped = str_replace("'", "", $row[1]);
-                echo"'$escaped ($row[2])',";
-            }
-            echo"'Fake User (fakeuser)'];
-            </script>";
-            echo"<div class='nonbmwsubmit'>Admin: Save this classification in someone else's profile: <input type='text' class='input-large' id='users' name='alternateuser'  placeholder='Start typing a name...'></div>";
+            echo"<div class='nonbmwsubmit'>Admin: Save this classification in someone else's profile: <input type='text' class='input-large typeahead' name='alternateuser'  placeholder='Start typing a name...'></div>";
         }
         echo"<button type='submit' class='btn btn-primary nonbmwsubmit' style='display:inline;'>Submit</button></form><div id='nonbmwhelper' class='badge badge-important'></div>";
 
@@ -266,17 +323,8 @@ if ($year != "" && $carid != "" && $wheelid != "") {
     if ($username){
       echo"<div id='differentclass'><br><br><table class='table'><Tr><Td>Want to run your car in a higher or non-competitive class?  Select it here</td><Td><SELECT name='chosenclass' class='span2' id='chosenclass'></SELECT></td></tr></table>";
 		if ($usergroup == "admin"){
-			echo"<script>
-			var peoplelist = [";
-	   		$result = mysql_query("SELECT * FROM `gy01d_users` WHERE `lastvisitdate` != '0000-00-00 00:00:00'") or die("Error: " . mysql_error());
-	   	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
-		   	   	$escaped = str_replace("'", "", $row[1]);
-	   	   		echo"'$escaped ($row[2])',";
-	   	   	}
-	   		echo"'Fake User (fakeuser)'];
-	   		</script>";
 			echo"<table class='table'><Tr><Td class='span8'>";
-	   		echo"Admin: Save this classification in someone else's profile</td><td class='span4'><input type='text' class='input-large' id='users' name='alternateuser'  placeholder='Start typing a name...'>";
+	   		echo"Admin: Save this classification in someone else's profile</td><td class='span4'><input type='text' class='input-large typeahead' name='alternateuser'  placeholder='Start typing a name...'>";
 	   		echo"</td></tr></table>";
    		}
         echo "</div><button class='btn btn-success' type='submit' id='submitclassification'>Save this classification to my user profile</button>";
@@ -287,10 +335,7 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 <Br><Br><br>
 </div>  <!--container-->
 <div class="navbar navbar-fixed-bottom bottombar" id='finalpoints'></div>
-<script src="js/jquery191min.js"></script>
-<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/selectboxit.js"></script>
+
 <script>
 function updatefloater(currentvalue,cumulativepoints)
 {
@@ -339,13 +384,29 @@ basepoints = basepoints * 1;
 var currentvalue = 0;
 currentvalue = currentvalue * 1;
 currentvalue = currentvalue + basepoints + pkgpoints + suspvalue;
-updatefloater(currentvalue,cumulativepoints); //klinquist 10/18
+updatefloater(currentvalue);
 
 
 
 
 
 $(document).ready(function(){
+
+    	<?php if ($usergroup == "admin"){
+  			echo"  	
+    
+            $('.typeahead').typeahead({
+				name: 'alternateuser',
+				local: [";	
+			$result = mysql_query("SELECT * FROM `gy01d_users` WHERE `lastvisitdate` != '0000-00-00 00:00:00'") or die("Error: " . mysql_error());
+            while ($row = mysql_fetch_array($result, MYSQL_NUM)) {  
+                $escaped = str_replace("'", "", $row[1]);
+                echo"'$escaped ($row[2])',";
+            }
+            echo"'Fake User (fakeuser)']});"; 
+         }?>
+
+
   
     $('#xclassinput').keyup(function() {
         var nonbmwyear = $(this).val().substr(0,2);
@@ -367,16 +428,8 @@ $(document).ready(function(){
 	$('#percenttable').hide();
 	$('#submitclassification').hide();
 	<?php if ($readytoclassify != "Y") { echo"$('#finalpoints').hide();"; }?>
-	$("select").selectBoxIt({});
+/* 	$("select").selectBoxIt({}); */
     $('#differentclass').hide();
-<?php 
-if ($usergroup == "admin"){ echo "
-	$('#users').typeahead({
-		source: peoplelist
-	});
-";
-}
-?>
 });
 
 
@@ -422,7 +475,7 @@ $('.modstable tbody tr').on('click', function(event) {
         pointvalue = pointvalue * 1;
         currentvalue = currentvalue - pointvalue;
         islsdselected = $(this).find('input').attr('name');
-        if (islsdselected == 'mod_id[38]') { lsd = 'N';} else { lsd = 'Y'; }  //klinquist 10/17 
+        if (islsdselected == 'mod_id[38]') { lsd = 'N';}
     } else {
         $(this).find('input').attr('value','true');           
          pointvalue = $(this).closest("table").find(".selected").find(".pointvalue").html(); 
@@ -437,7 +490,7 @@ $('.modstable tbody tr').on('click', function(event) {
         if (islsdselected == 'mod_id[38]') { lsd = 'Y';}        
     }
 
-	updatefloater(currentvalue,cumulativepoints); //klinquist 10/18
+    updatefloater(currentvalue);
 });
 $('.modstablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
@@ -455,7 +508,7 @@ $('.modstablemulti tbody tr').on('click', function(event) {
 
     }
 
-	updatefloater(currentvalue,cumulativepoints); //klinquist 10/18
+    updatefloater(currentvalue);
 });
 $('.enginetablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
@@ -498,26 +551,18 @@ $('.enginetablemulti tbody tr').on('click', function(event) {
     $('.enginemodpoints').append(cumulativepoints);        
     updatefloater(currentvalue,cumulativepoints);
 });
-$("#dyno").keyup(function() {  //need to add LSD logic here klinquist 10/17/13
+$("#dyno").keyup(function() {
 	var hp= $("#dyno").val()
 	<?php 
 	$bhp = $_SESSION['BHP'];
 	if (isset($_SESSION['BHP'])){ echo "var increase = Math.round((((hp/.85) / $bhp)-1) * 100);";} ?>
 
 	if (increase > 0) {
-			if (lsd == 'N'){
-			    for (var i=0;i<parseInt(enginemods.length);i++) {
-		        	if (increase >= enginemods[i][1] && increase <= enginemods[i][2]) { 
-		        		engineresult = enginemods[i][3];
-		        	}
-		        } 
-		    } else {
-			    for (var i=0;i<parseInt(enginemodslsd.length);i++) {
-		        	if (increase >= enginemodslsd[i][1] && increase <= enginemodslsd[i][2]) { 
-		        		engineresult = enginemodslsd[i][3];
-		        	}
-		        } 
-		    }
+		    for (var i=0;i<parseInt(enginemods.length);i++) {
+	        	if (increase >= enginemods[i][1] && increase <= enginemods[i][2]) { 
+	        		engineresult = enginemods[i][3];
+	        	}
+	        } 
 	        $('.percent').empty();
 	        $('.percent').append(increase);
 	        $('.enginemodpoints').empty();
