@@ -85,7 +85,7 @@ if (($carid == "") && ($year == "") && ($username != "")){
         if ($usergroup == "admin"){
             echo"<script>
             var peoplelist = [";
-            $result = mysql_query("SELECT * FROM `gy01d_users` WHERE `lastvisitdate` != '0000-00-00 00:00:00'") or die("Error: " . mysql_error());
+            $result = mysql_query("SELECT * FROM `wp_users`") or die("Error: " . mysql_error());
             while ($row = mysql_fetch_array($result, MYSQL_NUM)) {  
                 $escaped = str_replace("'", "", $row[1]);
                 echo"'$escaped ($row[2])',";
@@ -268,10 +268,10 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 		if ($usergroup == "admin"){
 			echo"<script>
 			var peoplelist = [";
-	   		$result = mysql_query("SELECT * FROM `gy01d_users` WHERE `lastvisitdate` != '0000-00-00 00:00:00'") or die("Error: " . mysql_error());
+	   		$result = mysql_query("SELECT * FROM `wp_users`") or die("Error: " . mysql_error());
 	   	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
-		   	   	$escaped = str_replace("'", "", $row[1]);
-	   	   		echo"'$escaped ($row[2])',";
+		   	   	$escaped = str_replace("'", "", $row[9]);
+	   	   		echo"'$escaped ($row[1])',";
 	   	   	}
 	   		echo"'Fake User (fakeuser)'];
 	   		</script>";
@@ -498,7 +498,7 @@ $('.enginetablemulti tbody tr').on('click', function(event) {
     $('.enginemodpoints').append(cumulativepoints);        
     updatefloater(currentvalue,cumulativepoints);
 });
-$("#dyno").keyup(function() {  //need to add LSD logic here klinquist 10/17/13
+$("#dyno").keyup(function() {  
 	var hp= $("#dyno").val()
 	<?php 
 	$bhp = $_SESSION['BHP'];

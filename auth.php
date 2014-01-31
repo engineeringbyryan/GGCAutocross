@@ -2,8 +2,6 @@
 date_default_timezone_set("America/Los_Angeles"); 
 
 
-
-
 $result = mysql_query("SELECT * FROM autox_close") or die("Error: " . mysql_error());
 while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	$close = $row[1];
@@ -55,10 +53,28 @@ if ($loginname){
 
 	if (is_user_logged_in()) {
 			$username = $user->user_login;
+
+			
+			foreach ( $user->roles as $role ) {
+				if ($role == "autox") { $usergroup = "admin";}
+				if ($role == "administrator") { $usergroup = "admin"; }
+			}
+
+			if ( isset($user->groups[ $site_admin_group ] ) ) {
+				$usergroup = "admin";
+			}
+
+			if ( isset($user->groups[ $autox_coord_group ] ) ) {
+				$usergroup = "admin";
+			}
+			
+			
+/*
 			if ($username == "klinquist") { $usergroup = "admin";}
 			if ($username == "jeffroberts") { $usergroup = "admin";}
 			if ($username == "TheCarousel") { $usergroup = "admin";}
-			if ($username == "MattV") { $usergroup = "admin";}					
+			if ($username == "MattV") { $usergroup = "admin";}	
+*/				
 
 	} else {
 			
@@ -78,11 +94,13 @@ if (is_user_logged_in()) {
 		global $username;
 		get_currentuserinfo();
 		$username = $current_user->user_login;
-		/* echo"logged in as $username"; */
-		if ($username == "klinquist") { $usergroup = "admin";}
-		if ($username == "jeffroberts") { $usergroup = "admin";}
-		if ($username == "TheCarousel") { $usergroup = "admin";}
-		if ($username == "MattV") { $usergroup = "admin";}		
+
+			foreach ( $current_user->roles as $role ) {
+				if ($role == "autox") { $usergroup = "admin";}
+				if ($role == "administrator") { $usergroup = "admin"; }
+				
+			}
+	
 }
 
 
