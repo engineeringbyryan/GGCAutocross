@@ -33,7 +33,7 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 
 
 define('WP_USE_THEMES', false);
-require("../new_html/wp-load.php");
+require("../wp-load.php");
 
 
 $loginname = $_POST[loginname];
@@ -44,6 +44,7 @@ if ($loginname){
 	$creds['user_login'] = $loginname;
 	$creds['user_password'] = $loginpassword;
 	$creds['remember'] = true;
+	//echo"creds $creds";
 	$user = wp_signon( $creds, false );
 	$userID = $user->ID;
 	wp_set_current_user( $userID, $user_login );
@@ -82,7 +83,7 @@ if ($loginname){
 			unset($username);
 			unset($fullname);
 			unset($usergroup);
-			echo "<div class='alert alert-error'>Incorrect login.   You may be locked out for too many attempts. <a href='http://ggcbmwcca.org/new_html/wp-login.php' target='_blank'>Go here</a> to see a more detailed error or to reset your password.</div>";
+			echo "<div class='alert alert-error'>Incorrect login.   You may be locked out for too many attempts. <a href='http://bmwautocross.com/wp-login.php' target='_blank'>Go here</a> to see a more detailed error or to reset your password.</div>";
 			writelog($loginname, "Incorrect login attempt");
 	} 
 
@@ -108,7 +109,7 @@ function loginform() {
 	if (!is_user_logged_in()) {
 		global $closemsg;
 		if (!$closemsg) { echo "<div class='alert alert-error'><button type='button' class='close' data-dismiss='alert'>&times;</button>In order to save a classification or choose a number, you must be logged in.<Br><Br>
-		<form class='form-inline' action='$_SERVER[PHP_SELF]' method='post'><input type='text' class='input-medium' placeholder='Login name' name='loginname'> <input type='password' class='input-medium' placeholder='Password' name='loginpassword'> <button type='submit' class='btn btn-primary'>Login</button> <a href='http://ggcbmwcca.org/new_html/wp-login.php?action=register' class='btn btn-link' target='_blank'>Create Account</a></form>
+		<form class='form-inline' action='$_SERVER[PHP_SELF]' method='post'><input type='text' class='input-medium' placeholder='Login name' name='loginname'> <input type='password' class='input-medium' placeholder='Password' name='loginpassword'> <button type='submit' class='btn btn-primary'>Login</button> <a href='http://bmwautocross.com/wp-login.php?action=register' class='btn btn-link' target='_blank'>Create Account</a></form>
 		</div>"; } else { echo "$closemsg"; }
 }
 

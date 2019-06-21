@@ -26,11 +26,45 @@ sqlconnect();
 <div class="container">
 <p>The GGC autocross system has been created as a method to classify & equalize BMW and Mini brand automobiles.  It uses a formula to calculate base points which takes into account horsepower, torque, gear ratios, differential ratios, and weight.  On top of the base points we add points for wheel widths, suspension stiffness, and owner-added modifications.</p>
 <p>To equalize a time, use the following formula:  equalizedTime = ((60/59.901) ^points) * actualTime * 0.85</p>
-<p>The system has been primarily developed by Matt Visser, Jason Sams, Jeff Roberts, and Kris Linquist.</p>
+<p>The system has been primarily developed by Matt Visser, Jason Sams, Jeff Roberts, Kris Linquist, and Ryan Rich.</p>
 <p>The online system has been coded by Kris Linquist @klinquist (http://www.linquist.com) using php, javascript, and jquery.  It is available open-source: <a href="http://www.github.com/klinquist/GGCAutocross">http://www.github.com/klinquist/GGCAutocross</a></p>
-<p>The system is revised periodically based on autocross results with known drivers.</p>
-
-<p>Here is a link to a full documentation of the system and its points: <a href="http://www.ggcbmwcca.org/autocross/2013-GGCAutocrossClassificationSystemDocumentation.pdf">http://www.ggcbmwcca.org/autocross/2013-GGCAutocrossClassificationSystemDocumentation.pdf</a></p>
+<p>The system is revised periodically by the Autocross Team. As revisions are made, they will be noted in the list below.</p>
+<table width="100%">
+  <col width="15%">
+  <col width="85%">
+  <tr>
+    <td><b>Date</b></td><td><b>Description</b></td> 
+  </tr>
+    <tr>
+    <td>March 22nd, 2017</td><td>The E90 M3 base points have been adjusted from 55 points to 58 points.<br></td> 
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>The E92 M3 base points have been adjusted from 56 points to 59 points.</td> 
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>The E93 M3 base points have been adjusted from 52 points to 55 points.</td> 
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>The F80 M3 base points have been adjusted from 61 points to 63 points.</td> 
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>The F82 M4 base points have been adjusted from 60 points to 62 points.</td> 
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>The F83 M3 base points have been adjusted from 59 points to 61 points.</td> 
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>A car was added the to system: 2001-2006 M3 (Without Sunroof). This car has 55 base points.</td>
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>The description for camber modifications have been updated to include the removing of alignment pins to achieve more camber.</td>
+  </tr>
+  <tr>
+    <td>March 22nd, 2017</td><td>Added the "W" class, where everyone is a winner!</td>
+  </tr>
+</table>
+<BR>
+<p><a href="https://bmwautocross.com/wp-content/uploads/2017/03/2017_GGC_AutocrossClassificationFAQ.pdf">Click here to view the full classification system documentation and FAQ.</a></p>
 
 <p>The point to class table can be found below.</p>
 
