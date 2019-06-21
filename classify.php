@@ -65,6 +65,8 @@ $suspvalue = 0;
 if ($carid == "") {
 	$_SESSION = array();
     echo "
+    <span class='label label-warning'>Note: Model year 2016 and 2017 BMWs will be added to the classification system shortly, please check back soon.</span>
+    <br><br>
     <form id='step1' action='$_SERVER[PHP_SELF]' method='post' name='year'>
     <p>Have a BMW or Mini?</p>
     <div class='input-append'>
@@ -87,8 +89,8 @@ if (($carid == "") && ($year == "") && ($username != "")){
             var peoplelist = [";
             $result = mysql_query("SELECT * FROM `wp_users`") or die("Error: " . mysql_error());
             while ($row = mysql_fetch_array($result, MYSQL_NUM)) {  
-                $escaped = str_replace("'", "", $row[1]);
-                echo"'$escaped ($row[2])',";
+                $escaped = str_replace("'", "", $row[9]);
+                echo"'$escaped ($row[1])',";
             }
             echo"'Fake User (fakeuser)'];
             </script>";
@@ -170,6 +172,8 @@ if ($year != "" && $carid != "" && $wheelid != "") {
         $_SESSION['opt_rear_wheel_width']  = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!            
         $_SESSION['opt_front_wheel_width'] = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!
     }
+    echo"<span class='label label-warning'>Note: Please review all classification descriptions as we have made changes to the classification system for the 2017 season.</span>"; //rrich 1/27/2017
+    echo"<br>"; //rrich 1/27/2017
     echo "<h3>" . $year . " " . $_SESSION['car'] . "</h3>";
     if ($_SESSION[pkg_points]) {
 	    echo "<h5>" . $_SESSION['points'] . " base points + " . $_SESSION['pkg_points'] . " point from larger wheels/tires included in package</h5>";
@@ -177,22 +181,29 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 	    echo "<h5>" . $_SESSION['points'] . " base points</h5>";
     }
     echo"<span class='label label-info'>Click on a modification to select/unselect</span><form id='options' action='calc.php' method='post'>";
-    $result = mysql_query("SELECT * FROM `autox_mod_categories` ORDER BY `mandatory_selection` DESC") or die("Error: " . mysql_error());
+    echo"<br>"; //rrich 3/19/2016
+    echo"<span class='label label-info'>If you have a question about a particular modification or if your car has a modification<br> that this system does not handle (Ex: Increasing wheel sizes more than 3\"),<br> please contact us at autocross@ggcbmwcca.org so we can assist you in getting your car correctly classified.</span>"; //rrich 3/19/2016
+    $result = mysql_query("SELECT * FROM `autox_mod_categories` ORDER BY `mandatory_selection` DESC, `category_id`") or die("Error: " . mysql_error());
     while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
         echo "<h4>$row[5]";
         if ($row[2] == "Y") {
             echo "    <span class='badge badge-important'>Selection required</span>";
         }
         echo "</h4><h5>$row[6]</h5>";
-        if ($row[0] == "11"){
+        if ($row[1] == "Front Wheels"){
 	        if ($_SESSION['opt_front_wheel_width']) { echo"<h5>We think your front wheels are ". $_SESSION['opt_front_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; } else { echo"<h5>We think your front wheels are ". $_SESSION['front_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; }
         }
+		
+		//if ($row[1] == "Weight Reduction"){
+			//echo "<h5>We think your vehicles curb weight is " . $_SESSION['weight'] . " pounds.</h5>"; //rrich 3/20/2016
+		//}
 
-        if ($row[0] == "12"){
+
+        if ($row[1] == "Rear Wheels"){
 	        if ($_SESSION['opt_rear_wheel_width']) { echo"<h5>We think your rear wheels are ". $_SESSION['opt_rear_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; } else { echo"<h5>We think your rear wheels are ". $_SESSION['rear_wheel_width'] . " inches wide. Calculate increased width from this value.</h5>"; }
         }
         $showlsd = "";
-        if ($row[0] == "13"){
+        if ($row[1] == "LSD"){
          
             if ($_SESSION['LSD_standard'] == "N") { 
                     echo "<h5>We don't think your car came from the factory with a limited slip differential.  If we are incorrect OR if you added an LSD, select this option.</h5>"; 
@@ -242,10 +253,10 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 
     }
     echo "<div id='enginemodificationsheader'><h4>Engine modifications</h4>
-	      <h5>Below is a list of engine modifications as well as an average percent gain that modification provides.  Click your modifications OR enter a rear wheel (not flywheel) horsepower number below that you believe is true either from a dyno chart or modification manufacturer claims.</h5></div>
+	      <h5>Below is a list of engine modifications as well as an average percent gain that modification provides.  Click your modifications OR enter a rear wheel (not flywheel) horsepower number below that you believe is true either from a dyno chart or modification manufacturer claims. Please select carefully as once you choose a calculation method, you will have to create a new classification to choose a different method.</h5></div>
 	      <center><p><button class='btn btn-info' id='showenginetable'>I wish to select my mods from a table and will assume GGC's engine gains are correct</button></p>
           <p><button class='btn btn-info' id='showrwhptable'>I wish to enter a rear wheel HP number</button></p>
-          <p><button class='btn btn-info' id='hidethebuttons'>I have no engine modifications</button></p></center>
+          <p><button class='btn btn-info' id='hidethebuttons'>I have no engine modifications</button></p>
           <table class='table table-condensed table-bordered enginetablemulti'><thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th style='padding-left:30px;'>% addt'l horsepower</th></tr></thead><tbody>";
     
     $result = mysql_query("SELECT * FROM `autox_mods_engine` ORDER BY `percent` ASC") or die("Error: " . mysql_error());
@@ -283,12 +294,14 @@ if ($year != "" && $carid != "" && $wheelid != "") {
     }
     echo"</form>";
 }
+        
+
 ?>
 <Br><Br><br>
 </div>  <!--container-->
 <div class="navbar navbar-fixed-bottom bottombar" id='finalpoints'></div>
 <script src="js/jquery191min.js"></script>
-<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/selectboxit.js"></script>
 <script>
@@ -296,22 +309,44 @@ function updatefloater(currentvalue,cumulativepoints)
 {
     if (!cumulativepoints) {cumulativepoints = 0;}
     var carclass;
+    var currentcarclass;
+    var chosencarclasstext = $('#chosenclass').find(":selected").text();
+    var chosencarclassval = $('#chosenclass').find(":selected").val();
     var texttodisplay = currentvalue + cumulativepoints;
     <?php
-sqlconnect();
-$result = mysql_query("SELECT * FROM `autox_classes`") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-    echo "if (texttodisplay >= $row[1] && texttodisplay <= $row[2]) { carclass = '$row[0]'; } ";
-}
-?>
-   var update = "Total points: " + texttodisplay + " - Class " + carclass;
-    $("#finalpoints").text(update);
-   if (carclass == 'C') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='B'>B</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
-   if (carclass == 'B') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
-   if (carclass == 'A') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
-   if (carclass == 'AA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
-   if (carclass == 'AAA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='Gonzo'>Gonzo</option>") ;} 
-   if (carclass == 'Gonzo') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option>") ;}     
+    sqlconnect();
+    $result = mysql_query("SELECT * FROM `autox_classes`") or die("Error: " . mysql_error());
+    while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+        echo "if (texttodisplay >= $row[1] && texttodisplay <= $row[2]) { carclass = '$row[0]'; } ";
+    }
+    ?>
+
+    // rrich 1/27/2017: If classification has 0 points, that means no car has been selected and we need to wait for a car to be selected to preform this piece.
+    if(texttodisplay != 0) {
+        if (chosencarclasstext != "") {currentcarclass = chosencarclasstext;}
+            else {currentcarclass = carclass;}
+        var update = "Total points: " + texttodisplay + " - Class " + currentcarclass;
+        $("#finalpoints").text(update);
+
+        if (carclass === 'C') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='B'>B</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
+        if (carclass === 'B') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
+        if (carclass === 'A') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
+        if (carclass === 'AA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
+        if (carclass === 'AAA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
+        if (carclass === 'Gonzo') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='W'>W (Winner)</option>") ;}
+
+        var username = "<?php echo $username  ?>"; 
+        if (username) {
+            $('select#chosenclass').selectBoxIt();
+            $('select#chosenclass').data("selectBox-selectBoxIt").refresh();
+        }
+
+        if (chosencarclasstext != '' && chosencarclassval != carclass){
+            $("#chosenclass").val(chosencarclassval).attr('selected','selected');
+            $('select#chosenclass').data("selectBox-selectBoxIt").refresh();
+        }
+    }
+
 }
 <?php
 echo "var enginemods = [";
@@ -330,6 +365,7 @@ echo "['Z',0,0,0]];";
 var cumulativepoints = 0;
 var lsd = '<?php echo $_SESSION['LSD_standard'];?>';
 var cumulativepercent = 0;
+var dynopoints = 0;
 var suspvalue = <?php echo $suspvalue; ?>;
 var pointvalue = 0;
 pointvalue = pointvalue * 1;
@@ -346,7 +382,6 @@ updatefloater(currentvalue,cumulativepoints); //klinquist 10/18
 
 
 $(document).ready(function(){
-  
     $('#xclassinput').keyup(function() {
         var nonbmwyear = $(this).val().substr(0,2);
         if ((nonbmwyear == '19') || (nonbmwyear == '20'))  {
@@ -357,7 +392,6 @@ $(document).ready(function(){
             } else {
                 $('#nonbmwhelper').text('');
             }
-
         }
     });
     $('.nonbmwsubmit').hide();
@@ -380,6 +414,24 @@ if ($usergroup == "admin"){ echo "
 });
 
 
+// rrich 1/27/2017: If it is a "Gonzo" class car, but has less than the minimum gonzo class points, display the total points as the minimum value.
+$('#chosenclass').change(function(event) {
+    <?php 
+        // rrich 1/27/2017: Get the number of points where "Gonzo" class starts.
+        $query = mysql_query("SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysql_error());
+        $gonzo = mysql_fetch_assoc($query);
+        echo "var gonzostartpoints = " . $gonzo['start_points'] . ";";
+    ?>
+    finalpoints = currentvalue + cumulativepoints;
+    if ($('#chosenclass').find(":selected").text() === "Gonzo" && finalpoints < gonzostartpoints){
+        $("#finalpoints").text("Total points: " + gonzostartpoints + " - Class Gonzo");
+    } 
+    else if ($('#chosenclass').find(":selected").text() === "W (Winner)"){
+        $("#finalpoints").text("Total points: 999 - Class W (Winner)"); 
+    } else {
+        updatefloater(currentvalue,cumulativepoints);
+    }
+    });      
 
 
 $('#showenginetable').on('click', function(event) {
@@ -402,7 +454,6 @@ $('#showrwhptable').on('click', function(event) {
 	$('#hidethebuttons').hide();
 	$('#submitclassification').show();	
     $('#differentclass').show();
-
 }); 
 $('#hidethebuttons').on('click', function(event) {
 	event.preventDefault();
@@ -410,10 +461,11 @@ $('#hidethebuttons').on('click', function(event) {
 	$('#showrwhptable').hide();
 	$('#hidethebuttons').hide();
 	$('#enginemodificationsheader').hide();
+    $('#noenginemodificationsheader').show();
 	$('#submitclassification').show();	
     $('#differentclass').show();
-
-});            
+});  
+                   
 $('.modstable tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
@@ -500,7 +552,7 @@ $('.enginetablemulti tbody tr').on('click', function(event) {
 });
 $("#dyno").keyup(function() {  
 	var hp= $("#dyno").val()
-	<?php 
+	<?php
 	$bhp = $_SESSION['BHP'];
 	if (isset($_SESSION['BHP'])){ echo "var increase = Math.round((((hp/.85) / $bhp)-1) * 100);";} ?>
 
@@ -526,17 +578,18 @@ $("#dyno").keyup(function() {
                 $('#explainhp').css('border', 'solid 1px red'); 
                 $('#explainhp').attr("placeholder", "Required");
             } 
-	        updatefloater(currentvalue,engineresult);	
+            cumulativepoints = (cumulativepoints + engineresult) - cumulativepoints; 
+	        updatefloater(currentvalue, cumulativepoints);	
             $('#dynorow').addClass('selected');      
 	} else {
-	        $('.percent').empty();
+            $('.percent').empty();
 	        $('.percent').append("0");
 	        $('.enginemodpoints').empty();
 	        $('.enginemodpoints').append("0"); 
             $('#dynorow').removeClass('selected');  
             $('#explainhp').css('border', ''); 
-            $('#explainhp').attr("placeholder", ""); 
-	        updatefloater(currentvalue);	 
+            $('#explainhp').attr("placeholder", "");
+            updatefloater(currentvalue);  
 	}
 });
 </script>

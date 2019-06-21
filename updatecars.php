@@ -32,6 +32,13 @@ if ($action == "delcar"){
 }
 
 
+if ($action == "unnumber"){
+	$result = mysql_query("UPDATE autox_numbers SET `username` = '' WHERE `username` = '$username'");
+
+	writelog($username, "Unassigned number - $id");
+}
+
+
 if ($action == "renumber"){
 	$result = mysql_query("SELECT * from autox_numbers where `drivernumber` = '$id'");
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {

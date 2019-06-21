@@ -25,10 +25,10 @@ if ($nonbmw == "Y") {
 	$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
 	$carmodel = strstr($cardesc, " ");
 	$year = strstr($cardesc, " ", true); // As of PHP 5.3.0
-	if ($alternateuser){
+	if ($alternateuser != ""){
 		$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$alternateuser' AND `active` = 'Y'");
 		$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$alternateuser', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
-		writelog($username, "Admin classified an X class car ($year $carmodel) as this user");
+		writelog($username, "Admin classified an X class car ($year $carmodel) as $alternateuser");
 	} else {
 		$result = mysql_query("UPDATE autox_classifications SET `active` = '' WHERE `username` = '$username' AND `active` = 'Y'");
 		$result = mysql_query("INSERT INTO autox_classifications VALUES ('', '$username', 'X', '', '$year', '$carmodel', '', '', '', '', now(), 'Y', '')") or die("Error: " . mysql_error());
@@ -100,7 +100,6 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	if ($enginepercent >= $row[3] && $enginepercent <= $row[4]) {
 		$enginepoints = $row[2];
 	}
-    
 }
 
 
@@ -136,7 +135,7 @@ echo "$serialized_car<br><br>$serialized_mods<br><br>$serialized_engine<br><br>$
 $year = $_SESSION['year'];
 $car = $_SESSION['car'];
 
-if (!$_POST['class']) {
+		if (!$_POST['class']) {
 	$result = mysql_query("SELECT * FROM `autox_classes`") or die("Error: " . mysql_error());
 	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	    if ($totalpoints >= $row[1] && $totalpoints <= $row[2]) { $class = $row[0]; } 
@@ -144,7 +143,12 @@ if (!$_POST['class']) {
 	}
 }
 
-//if ($chosenclass != "") { $class = $chosenclass; if ($chosenclass == "Gonzo"){ $totalpoints="80";}}
+if ($chosenclass != "") { 
+	$class = $chosenclass;
+	// rrich 1/27/2017: Commenting this line out so that we are not saving the "Gonzo" minimum points in the DB. This is to fix the issue with the TDS export.
+	//if ($chosenclass == "Gonzo"){ $totalpoints="80";}
+}
+
 
 if ($alternateuser){
 	echo"SAVING to $alternateuser";

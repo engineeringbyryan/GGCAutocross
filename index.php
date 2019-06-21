@@ -8,6 +8,15 @@ if ($_GET[user]) {
 	}
 }	
 sqlconnect();
+
+
+$result = mysql_query("SELECT * FROM wp_users WHERE user_login = '$username'") or die("Error: " . mysql_error());
+while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	$userid = $row[0];
+	$display_name = $row[9];
+}
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -27,7 +36,7 @@ sqlconnect();
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <title>GGC BMW CCA Autocross page</title>
+    <title>GGC BMW CCA Autocross page </title>
     <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
     <style>
         body {
@@ -83,6 +92,12 @@ A typical signup process for a <u>first timer</u> is:
 </p>
 <?php
 } else {
+
+if ($display_name == $username) {
+	echo"<div class='alert alert-error' id='fullnamebox'>Your first & last name is not in our database.  Please enter your first & last name here: <form class='form-inline' action='' method='post'><input type='text' class='input-medium' placeholder='John Doe' name='fullname' id='fullname'> <button type='submit' class='btn btn-primary' id='fullnameformsubmit'>Send</button></div>";
+}
+
+
 $result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '$username' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());
 if (mysql_num_rows($result) == "0"){
 	echo"<br><Br><span class='badge badge-important'>You have not chosen a number.  You must choose a number to compete!</span><br><br>  Choose a number here: ";
@@ -114,7 +129,19 @@ if (mysql_num_rows($result) != "0") {
 	} else {
 		$rowclass = "";
 	}
-		echo"<tr class='$rowclass' id='$row[0]'><td class='activecell'>$row[4] $row[5]</td><td class='activecell'>$row[3]</td><Td class='activecell'>$row[2]</td><Td><a href='show.php?id=$row[0]&popup=Y' class='btn carinfoajax'>View details</a> <a href='#' class='btn btn-danger delcar'>Delete</a></td></tr>";
+
+	// rrich 1/27/2017: Get the number of points where "Gonzo" class starts.
+  	$query = mysql_query("SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysql_error());
+	$gonzo = mysql_fetch_assoc($query);
+	$gonzostartpoints = $gonzo['start_points'];
+
+	// rrich 1/27/2017: If it is a "Gonzo" class car, but has less than the minimum gonzo class points, make the total points the minimum value.
+	if ($row[2] === "Gonzo" && $row[3] < $gonzostartpoints){
+		$points = $gonzostartpoints; 
+	} else {
+		$points = $row[3];
+	}
+	echo"<tr class='$rowclass' id='$row[0]'><td class='activecell'>$row[4] $row[5]</td><td class='activecell'>$points</td><Td class='activecell'>$row[2]</td><Td><a href='show.php?id=$row[0]&popup=Y' class='btn carinfoajax'>View details</a> <a href='#' class='btn btn-danger delcar'>Delete</a></td></tr>";
 	}
 	echo"</tbody></table><p><i>You cannot edit an existing classification. To make changes, you must delete the car and re-classify.</i></p>";
 }
@@ -161,8 +188,8 @@ if (!$activebutton){ echo"<br><Br><span class='badge badge-important' id='classw
 </div> <!--row-fluid-->
 </div>  <!--container-->
 <?php include ('bottombar.html'); ?>
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.colorbox.js"></script>
 <script src="js/selectboxit.js"></script>
@@ -209,5 +236,25 @@ $('.delcar').click(function(event){
 		
 	});
 });
+
+
+$("#fullnameformsubmit").click(function() {
+	var fullname =  $("#fullname").val();
+	if (fullname != ""){
+		var dataString = 'username=' + '<?php echo $username;?>' + '&fullname=' + fullname + '&userid=' + '<?php echo $userid;?>';
+		console.log(dataString);
+		$.ajax({
+		  type: "POST",
+		  url: "addfullname.php",
+		  data: dataString,
+		  success: function() {
+		    $('#fullnamebox').hide();
+		  }
+		});
+	}
+});
+
+
+
 </script>
 </body></html>

@@ -51,6 +51,7 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 	$engine_id = unserialize($row[8]);
 	$flywheelhp = $row[9];
 	$hpclaim = $row[12];
+	$class = $row[2];
 }
 
 
@@ -154,7 +155,25 @@ if ($enginepercent) {
 	echo "<tr><Td>Total engine percent increase</td><Td>(+$enginepercent %)</td></tr>";
 	echo "<Tr><Td>Total points from engine</td><Td>$enginepoints</td></tr>";
 }
-echo "<tr><Td><h3>Total</h3></td><td><h3>$totalpoints</h3></td></tr></table>";
+
+
+// rrich 1/27/2017: Get the number of points where "Gonzo" class starts.
+$query = mysql_query("SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysql_error());
+$gonzo = mysql_fetch_assoc($query);
+$gonzostartpoints = $gonzo['start_points'];
+
+// rrich 1/27/2017: If it is a "Gonzo" class car, but has less than the minimum gonzo class points, define how many points were added to make it a "Gonzo" class car and make the total points the minimum value.
+if ($class == "Gonzo" && $totalpoints < $gonzostartpoints) {
+	$adjustmentpoints = $gonzostartpoints - $totalpoints;
+	echo "<Tr><Td>Gonzo Adjustment</td><td>$adjustmentpoints</td></tr>";
+	echo "<tr><Td><h3>Total</h3></td><td><h3>$gonzostartpoints</h3></td></tr></table>";
+} else if ($class == "W"){ 
+	$adjustmentpoints = 999 - $totalpoints;
+	echo "<Tr><Td>Winner Adjustment</td><td>$adjustmentpoints</td></tr>";
+	echo "<tr><Td><h3>Total</h3></td><td><h3>999</h3></td></tr></table>";
+} else {
+	echo "<tr><Td><h3>Total</h3></td><td><h3>$totalpoints</h3></td></tr></table>";
+}
 
 
 if ($popup != 'Y'){
@@ -163,7 +182,7 @@ if ($popup != 'Y'){
 
 </div>  <!--container-->
 <?php include('bottombar.html');?>
-<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.colorbox.js"></script>
 

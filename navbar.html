@@ -6,18 +6,25 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/autocross">GGC BMW CCA Autocross</a>
+          <a class="brand" href="http://bmwautocross.com/">GGC BMW CCA Autocross</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li <?=echoActiveClassIfRequestMatches("autocross")?>><a href="/autocross">Autocross Home</a></li>
+              <li <?=echoActiveClassIfRequestMatches("autocross")?>><a href="/autocross">Classification System Home</a></li>
+              <li><a href="http://bmwautocross.com/forums/forum/ggc-bmw-cca-forums/">Forum</a></li>
               <li <?=echoActiveClassIfRequestMatches("classify")?>><a href="classify.php">Car Classifier</a></li>
               <li <?=echoActiveClassIfRequestMatches("showcars")?>><a href="showcars.php">Show all classified cars</a></li> 
               <li <?=echoActiveClassIfRequestMatches("about")?>><a href="about.php">About</a></li>  
+              
               <?php if ($usergroup == "admin") { ?>
               <li <?=echoActiveClassIfRequestMatches("admin")?>><a href="admin.php">Admin</a></li> 
               <?php } ?>
             </ul>
-            <?php if ($username) { echo"<ul class='nav pull-right'><li><a href='logout.php'>Logout $fullname</a></li></ul>"; } ?>
+            <?php 
+            if ($username) 
+            { 
+              echo "<ul class='nav pull-right'><li><a href='" . wp_logout_url() . "'>Logout $fullname</a></li></ul>"; 
+            } 
+            ?>
           </div><!--/.nav-collapse -->
         </div>
       </div>
