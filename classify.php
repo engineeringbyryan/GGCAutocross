@@ -55,8 +55,11 @@ include('auth.php');
 <div class="container">
     <div id="floatDiv"></div>
 <?php
-if (!$username){
-	loginform();
+if (!$username or ($closemsg and $usergroup <> "admin")){
+    if($username) {
+        echo "$closemsg";
+    }
+    loginform();
 }
 $year    = $_POST[year];
 $carid   = $_POST[carid];
@@ -65,7 +68,7 @@ $suspvalue = 0;
 if ($carid == "") {
 	$_SESSION = array();
     echo "
-    <span class='label label-warning'>Note: Model year 2016 and 2017 BMWs will be added to the classification system shortly, please check back soon.</span>
+    <span class='label label-warning'>Note: If your vehicle is missing from the classification system, please contact the autocross team at 'autocross@ggcbmwcca.org'.</span>
     <br><br>
     <form id='step1' action='$_SERVER[PHP_SELF]' method='post' name='year'>
     <p>Have a BMW or Mini?</p>
@@ -82,7 +85,7 @@ if ($carid == "") {
     }
     echo "</SELECT></div></form>";
 }
-if (($carid == "") && ($year == "") && ($username != "")){
+if (($carid == "") && ($year == "") && ($username != "" && ($closemsg == "" || $usergroup == "admin"))){
 	    echo "<p>Don't have a BMW or Mini?  Type in the year, make, and model of your car:</p><form id='step1' action='calc.php?nonbmw=Y' method='post'> <input name='cardesc' class='input-large' id='xclassinput' placeholder='2000 Mazda Miata'>";
         if ($usergroup == "admin"){
             echo"<script>
@@ -270,11 +273,11 @@ if ($year != "" && $carid != "" && $wheelid != "") {
     $total = round($rwhp + 10);
     echo "<table class='table table-condensed table-bordered' id='rwhptable'>
         <tr id='dynorow'><td class='span6' style='padding-left:30px;'>Your TOTAL rear wheel (not flywheel) horsepower based on dyno or modification manufacturer claims. We think your car has approx <B>$rwhp</b> rwhp, if you added a mod that adds a claimed 10hp, enter <B>$total</b> in this box.</td><td class='span2' style='padding-left:30px;'><input type='text' name='flywheelhp' id='dyno' class='input-small'>hp</td></tr>";
-       if ($username) { echo "<tr id='claimrow'><td class='span6' style='padding-left:30px;'>If you entered a RWHP number based on manufacturers claims, please list your engine mods in this box. If you entered a RWHP number based on a dyno, simply type 'dyno' into this box.</td><Td class='span2' style='padding-left:30px;'><textarea name='hpclaim' id='explainhp'></textarea></td></tr>"; }
+       if ($username and (!$closemsg or $usergroup == "admin")) { echo "<tr id='claimrow'><td class='span6' style='padding-left:30px;'>If you entered a RWHP number based on manufacturers claims, please list your engine mods in this box. If you entered a RWHP number based on a dyno, simply type 'dyno' into this box.</td><Td class='span2' style='padding-left:30px;'><textarea name='hpclaim' id='explainhp'></textarea></td></tr>"; }
 
     echo"<Tr><td class='span6' style='padding-left:30px;'>Total additional hp</td><td class='span2' style='padding-left:30px;'><div class='percent' style='display: inline;'>0</div>%</td></tr>
          <Tr><td class='span6' style='padding-left:30px;'>Points from engine mods</td><Td class='span2' style='padding-left:30px;'><div class='enginemodpoints' style='display: inline;'>0</div></td></tr></table>";
-    if ($username){
+    if ($username and (!$closemsg or $usergroup == "admin")){
       echo"<div id='differentclass'><br><br><table class='table'><Tr><Td>Want to run your car in a higher or non-competitive class?  Select it here</td><Td><SELECT name='chosenclass' class='span2' id='chosenclass'></SELECT></td></tr></table>";
 		if ($usergroup == "admin"){
 			echo"<script>
@@ -305,6 +308,9 @@ if ($year != "" && $carid != "" && $wheelid != "") {
 <script src="js/bootstrap.min.js"></script>
 <script src="js/selectboxit.js"></script>
 <script>
+var closemsg = "<?php echo $closemsg ?>";
+var usergroup = "<?php echo $usergroup ?>";
+
 function updatefloater(currentvalue,cumulativepoints)
 {
     if (!cumulativepoints) {cumulativepoints = 0;}
@@ -336,7 +342,7 @@ function updatefloater(currentvalue,cumulativepoints)
         if (carclass === 'Gonzo') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='W'>W (Winner)</option>") ;}
 
         var username = "<?php echo $username  ?>"; 
-        if (username) {
+        if (username && (!closemsg || usergroup == "admin")) {
             $('select#chosenclass').selectBoxIt();
             $('select#chosenclass').data("selectBox-selectBoxIt").refresh();
         }
@@ -376,8 +382,6 @@ var currentvalue = 0;
 currentvalue = currentvalue * 1;
 currentvalue = currentvalue + basepoints + pkgpoints + suspvalue;
 updatefloater(currentvalue,cumulativepoints); //klinquist 10/18
-
-
 
 
 
@@ -442,8 +446,8 @@ $('#showenginetable').on('click', function(event) {
 	$('#showenginetable').hide();
 	$('#percenttable').show();
 	$('#hidethebuttons').hide();
-	$('#submitclassification').show();
-    $('#differentclass').show();	
+    $('#differentclass').show();
+    $('#submitclassification').show();
 });      
 $('#showrwhptable').on('click', function(event) {
 	event.preventDefault();
@@ -452,8 +456,8 @@ $('#showrwhptable').on('click', function(event) {
 	$('#showrwhptable').hide();
 	$('#percenttable').show();
 	$('#hidethebuttons').hide();
-	$('#submitclassification').show();	
     $('#differentclass').show();
+    $('#submitclassification').show();  
 }); 
 $('#hidethebuttons').on('click', function(event) {
 	event.preventDefault();
@@ -462,8 +466,8 @@ $('#hidethebuttons').on('click', function(event) {
 	$('#hidethebuttons').hide();
 	$('#enginemodificationsheader').hide();
     $('#noenginemodificationsheader').show();
-	$('#submitclassification').show();	
     $('#differentclass').show();
+    $('#submitclassification').show();
 });  
                    
 $('.modstable tbody tr').on('click', function(event) {
@@ -495,7 +499,7 @@ $('.modstablemulti tbody tr').on('click', function(event) {
     if ($(this).hasClass('selected')) {
         $(this).find('input').attr('value','false');
         $(this).removeClass('selected');
-          pointvalue = $(this).find(".pointvalue").html(); 
+        pointvalue = $(this).find(".pointvalue").html(); 
         pointvalue = pointvalue * 1
         currentvalue = currentvalue - pointvalue;
     } else {

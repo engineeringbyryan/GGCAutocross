@@ -70,10 +70,11 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 <?php
 
 
-if (!$username){
-
+if (!$username or ($closemsg and $usergroup <> "admin")){
+	if($username) {
+		echo "$closemsg";
+	}
 	loginform();
-	
 ?>
 
 <h3>Welcome to GGC Autocross!</h3>
