@@ -113,37 +113,11 @@ if ($year != "" && $carid == "") {
     }
     mysql_free_result($result);
     echo "</SELECT></div></form>";
-
-
 }
-if ($year != "" && $carid != "" && $wheelid == "") {
-    sqlconnect();
-    $result = mysql_query("SELECT * FROM `autox_optional_car_wheels` WHERE `car_id` = '$carid'") or die("Error: " . mysql_error());
-    if (mysql_num_rows($result) == 0) {
-        $url = "$_SERVER[PHP_SELF]?year=$year&carid=$carid&wheelid=0";
-        echo "<form id='step2' action='$_SERVER[PHP_SELF]' method='post' name='model' onload='this.form.submit()'>
-        <input type='hidden' name='year' value='$year'>
-        <input type='hidden' name='carid' value='$carid'>
-        <input type='hidden' name='wheelid' value='0'>
-        </form>
-        <script>
-            document.model.submit();
-        </script>
-        ";
-        //echo"There are no optional wheel/tire packages for this vehicle.  <a href='$url'>Click here to continue your classification</a>.";
-    } else {
-        echo "<form id='step2' action='$_SERVER[PHP_SELF]' method='post' name='model'><input type='hidden' name='year' value='$year'><input type='hidden' name='carid' value='$carid'>
-    <div class='input-append'>
-    <SELECT name='wheelid' class='span5' onchange='this.form.submit()'><option value='N'>Select your optional wheel/tire package</option>
-    <option value='0'>None</option>";
-        while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-            echo "<option value='$row[0]'>$row[2]</option>";
-        }
-        mysql_free_result($result);
-        echo "</SELECT></div></form>";
-    }
-}
-if ($year != "" && $carid != "" && $wheelid != "") {
+
+// NOTE: We are disabling the portion of the system that determines vehicle package. With BMWs most recent line up, there are too many variants to make this sustainable. If we need to add this back, please look at the previous commit history. 
+
+if ($year != "" && $carid != "") {
     $readytoclassify="Y";
     sqlconnect();
     $result = mysql_query("SELECT * FROM `autox_cars` WHERE `car_id` = '$carid'") or die("Error: " . mysql_error());
@@ -153,36 +127,16 @@ if ($year != "" && $carid != "" && $wheelid != "") {
             $_SESSION[mysql_field_name($result, $key)] = $value;
         }
     }
-    $wheelresult = mysql_query("SELECT * FROM `autox_optional_car_wheels` WHERE `car_id` = '$carid' AND `wheel_id` = '$wheelid'") or die("Error: " . mysql_error());
-    if (mysql_num_rows($wheelresult) > 0) {
-        while ($wheelrow = mysql_fetch_array($wheelresult, MYSQL_NUM)) {
-            $_SESSION['opt_rear_wheel_width']  = $wheelrow[5];
-            $_SESSION['opt_front_wheel_width'] = $wheelrow[9];
-            $_SESSION['pkg_points']            = (($_SESSION['opt_rear_wheel_width'] - $_SESSION['rear_wheel_width']) / .5); //add 1/2 point for every addt'l 1" wheel width
-            $_SESSION['pkg_points']            = $_SESSION['pkg_points'] + (($_SESSION['opt_front_wheel_width'] - $_SESSION['front_wheel_width']) / .5); //add 1/2 point for every addt'l 1" wheel width
-            $_SESSION['opt_package_desc']	   = $wheelrow[2];
-            $_SESSION['opt_package_name']      = $wheelrow[3];
-            if ($_SESSION['opt_package_name'] != "") { $_SESSION['car'] = $_SESSION['car'] . " " . $_SESSION['opt_package_name']; } else { $_SESSION['car'] = $_SESSION['car'] . " " . $_SESSION['opt_package_desc'];  }
+    
+    $_SESSION['opt_package_desc']	   = "";
+    $_SESSION['opt_package_name']      = "";
+    $_SESSION['opt_rear_wheel_width']  = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!            
+    $_SESSION['opt_front_wheel_width'] = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!
 
-            $pkgcode = mysql_query("SELECT * FROM `autox_packages` WHERE `package_code` = '$wheelrow[3]'") or die("Error: " . mysql_error());
-            while ($pkgcode = mysql_fetch_array($pkgcode, MYSQL_NUM)) {
-            	$_SESSION['suspension_code'] = $pkgcode[3];
-            }
-        }
-    } else {
-        $_SESSION['opt_package_desc']	   = "";
-        $_SESSION['opt_package_name']      = "";
-        $_SESSION['opt_rear_wheel_width']  = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!            
-        $_SESSION['opt_front_wheel_width'] = ""; //destroy the cookie... otherwise if you go back, you'll have the wrong # of points!
-    }
-    echo"<span class='label label-warning'>Note: Please review all classification descriptions as we have made changes to the classification system for the 2017 season.</span>"; //rrich 1/27/2017
-    echo"<br>"; //rrich 1/27/2017
+    echo"<span class='label label-warning'>Note: Please review all classification descriptions as we have made changes to the classification system for the 2022 season.</span>";
+    echo"<br>";
     echo "<h3>" . $year . " " . $_SESSION['car'] . "</h3>";
-    if ($_SESSION[pkg_points]) {
-	    echo "<h5>" . $_SESSION['points'] . " base points + " . $_SESSION['pkg_points'] . " point from larger wheels/tires included in package</h5>";
-    } else {
-	    echo "<h5>" . $_SESSION['points'] . " base points</h5>";
-    }
+	echo "<h5>" . $_SESSION['points'] . " base points</h5>";
     echo"<span class='label label-info'>Click on a modification to select/unselect</span><form id='options' action='calc.php' method='post'>";
     echo"<br>"; //rrich 3/19/2016
     echo"<span class='label label-info'>If you have a question about a particular modification or if your car has a modification<br> that this system does not handle (Ex: Increasing wheel sizes more than 3\"),<br> please contact us at autocross@ggcbmwcca.org so we can assist you in getting your car correctly classified.</span>"; //rrich 3/19/2016
@@ -239,7 +193,7 @@ if ($year != "" && $carid != "" && $wheelid != "") {
             if  ($_SESSION['suspension_code'] == $anotherrow[5]) {
 	            $default = "Y"; 
 	            if ($anotherrow[5] != "B") {
-			        $addtlinfo = "(<i>Auto selected due to car/package</i>)";
+			        $addtlinfo = "(<i>Auto selected due to car</i>)";
 			    }
 	            $suspvalue = $suspvalue + $anotherrow[4];
             }
@@ -334,12 +288,12 @@ function updatefloater(currentvalue,cumulativepoints)
         var update = "Total points: " + texttodisplay + " - Class " + currentcarclass;
         $("#finalpoints").text(update);
 
-        if (carclass === 'C') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='B'>B</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
-        if (carclass === 'B') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
-        if (carclass === 'A') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
-        if (carclass === 'AA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
-        if (carclass === 'AAA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='Gonzo'>Gonzo</option><option value='W'>W (Winner)</option>") ;} 
-        if (carclass === 'Gonzo') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='W'>W (Winner)</option>") ;}
+        if (carclass === 'C') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='B'>B</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
+        if (carclass === 'B') { $("#chosenclass").html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='A'>A</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
+        if (carclass === 'A') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AA'>AA</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
+        if (carclass === 'AA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='AAA'>AAA</option><option value='Gonzo'>Gonzo</option>") ;} 
+        if (carclass === 'AAA') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option><option value='Gonzo'>Gonzo</option>") ;} 
+        if (carclass === 'Gonzo') { $('#chosenclass').html("<option value=''></option><option value='N'>N (Non-compete)</option>") ;}
 
         var username = "<?php echo $username  ?>"; 
         if (username && (!closemsg || usergroup == "admin")) {
@@ -429,9 +383,6 @@ $('#chosenclass').change(function(event) {
     finalpoints = currentvalue + cumulativepoints;
     if ($('#chosenclass').find(":selected").text() === "Gonzo" && finalpoints < gonzostartpoints){
         $("#finalpoints").text("Total points: " + gonzostartpoints + " - Class Gonzo");
-    } 
-    else if ($('#chosenclass').find(":selected").text() === "W (Winner)"){
-        $("#finalpoints").text("Total points: 999 - Class W (Winner)"); 
     } else {
         updatefloater(currentvalue,cumulativepoints);
     }

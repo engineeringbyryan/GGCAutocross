@@ -47,8 +47,6 @@ ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
 		} else {
 			if (($row[8] == "Gonzo") && ($row[7] < $gonzostartpoints)) { 
 				$points = $gonzostartpoints; 
-			} else if ($row[8] == "W"){
-				$points = 999;
 			} else { $points = $row[7]; }
 			$export = $export . "$row[0],$row[1],$row[2],$firstname,$lastname,$fullname,$row[5],$row[6],$points,$row[8]\n";
 		}
@@ -157,15 +155,14 @@ WHERE
 	and autox_classifications.active = 'Y'
 ORDER BY 
 	case 
-	when autox_classifications.class = 'W' then 1
-	when autox_classifications.class = 'Gonzo' then 2
-    when autox_classifications.class = 'AAA' then 3
-    when autox_classifications.class = 'AA' then 4
-    when autox_classifications.class = 'A' then 5
-    when autox_classifications.class = 'B' then 6
-    when autox_classifications.class = 'C' then 7
-    when autox_classifications.class = 'N' then 8
-    when autox_classifications.class = 'X' then 9
+	when autox_classifications.class = 'Gonzo' then 1
+    when autox_classifications.class = 'AAA' then 2
+    when autox_classifications.class = 'AA' then 3
+    when autox_classifications.class = 'A' then 4
+    when autox_classifications.class = 'B' then 5
+    when autox_classifications.class = 'C' then 6
+    when autox_classifications.class = 'N' then 7
+    when autox_classifications.class = 'X' then 8
     else 10
     end asc, autox_classifications.points desc") or die("Error: " . mysql_error());
 
@@ -180,8 +177,6 @@ ORDER BY
 		// rrich 1/27/2017: If it is a "Gonzo" class car, but has less than the minimum gonzo class points, make the total points the minimum value.
 		if ($row[6] == "Gonzo" && $row[5] < $gonzostartpoints) {
 			$points = $gonzostartpoints;
-		} else if ($row[6] == "W"){
-			$points = "999";
 		} else {
 			$points = $row[5];
 		}

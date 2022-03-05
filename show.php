@@ -167,10 +167,6 @@ if ($class == "Gonzo" && $totalpoints < $gonzostartpoints) {
 	$adjustmentpoints = $gonzostartpoints - $totalpoints;
 	echo "<Tr><Td>Gonzo Adjustment</td><td>$adjustmentpoints</td></tr>";
 	echo "<tr><Td><h3>Total</h3></td><td><h3>$gonzostartpoints</h3></td></tr></table>";
-} else if ($class == "W"){ 
-	$adjustmentpoints = 999 - $totalpoints;
-	echo "<Tr><Td>Winner Adjustment</td><td>$adjustmentpoints</td></tr>";
-	echo "<tr><Td><h3>Total</h3></td><td><h3>999</h3></td></tr></table>";
 } else {
 	echo "<tr><Td><h3>Total</h3></td><td><h3>$totalpoints</h3></td></tr></table>";
 }
