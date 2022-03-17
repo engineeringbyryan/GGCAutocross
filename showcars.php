@@ -1,17 +1,17 @@
 <?php
 include('functions.php');
-sqlconnect();
+$db = sqlconnect();
 include('auth.php');
-sqlconnect();
+$db = sqlconnect();
 
 // rrich 1/27/2017: Get the number of points where "Gonzo" class starts.
-$query = mysql_query("SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysql_error());
-$gonzo = mysql_fetch_assoc($query);
+$query = mysqli_query($db, "SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysqli_error());
+$gonzo = mysqli_fetch_assoc($query);
 $gonzostartpoints = $gonzo['start_points'];
 
 if (($_GET['export'] == "Y") && ($usergroup == "admin")) {
 	$file = "export/" . date("Ymd") . "-classificationExport.csv";
-	$result = mysql_query("SELECT wp_users.user_login, wp_users.user_email, autox_numbers.drivernumber,
+	$result = mysqli_query($db, "SELECT wp_users.user_login, wp_users.user_email, autox_numbers.drivernumber,
 wp_users.display_name, CONCAT(
 (select wp_usermeta.meta_value from wp_usermeta where wp_usermeta.user_id = wp_users.id and wp_usermeta.meta_key = 'first_name'),' ',(select wp_usermeta.meta_value from wp_usermeta where wp_usermeta.user_id = wp_users.id and wp_usermeta.meta_key = 'last_name')) full_name,
 autox_classifications.car_year,
@@ -25,9 +25,9 @@ autox_numbers
 WHERE wp_users.user_login = autox_classifications.username
 and wp_users.user_login = autox_numbers.username
 and autox_classifications.active = 'Y'
-ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
+ORDER BY autox_numbers.drivernumber") or die("Error: " . mysqli_error());
 	$tds = $_GET[tds];
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		$capitalizedname = ucwords($row[3]);
 		$lastname = trim(strstr($capitalizedname, " "));
 		$firstname = trim(strstr($capitalizedname, " ", true)); // As of PHP 5.3.0
@@ -68,7 +68,7 @@ ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
 
 if (($_GET['msrexport'] == "Y") && ($usergroup == "admin")) {
 	$file = "export/" . date("Ymd") . "-DriverNumberExport.csv";
-	$result = mysql_query("SELECT autox_numbers.drivernumber,
+	$result = mysqli_query($db, "SELECT autox_numbers.drivernumber,
 wp_users.display_name,
 wp_users.user_email,
 CASE
@@ -77,8 +77,8 @@ FROM
 wp_users,
 autox_numbers
 WHERE wp_users.user_login = autox_numbers.username
-ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+ORDER BY autox_numbers.drivernumber") or die("Error: " . mysqli_error());
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		$row[0] = trim(str_replace(",", "", $row[0]));
 		$row[1] = trim(str_replace(",", "", $row[1]));
 		$row[2] = trim(str_replace(",", "", $row[2]));
@@ -136,7 +136,7 @@ ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
 <?php include('navbar.html');?>
 <div class="container firstelement">
 <?php
-  $result = mysql_query("SELECT 
+  $result = mysqli_query($db, "SELECT 
 	autox_numbers.drivernumber,
 	wp_users.display_name, 
 	CONCAT((select wp_usermeta.meta_value from wp_usermeta where wp_usermeta.user_id = wp_users.id and wp_usermeta.meta_key = 'first_name'),' ',(select wp_usermeta.meta_value from wp_usermeta where wp_usermeta.user_id = wp_users.id and wp_usermeta.meta_key = 'last_name')) full_name,
@@ -164,14 +164,14 @@ ORDER BY
     when autox_classifications.class = 'N' then 7
     when autox_classifications.class = 'X' then 8
     else 10
-    end asc, autox_classifications.points desc") or die("Error: " . mysql_error());
+    end asc, autox_classifications.points desc") or die("Error: " . mysqli_error());
 
   	echo"<h4>All Classified Cars</h4>
 	<table class='table table-condensed table-striped sortable' id='classifytable'>
 	<thead>
 	<tr><th>Number</th><th>Name</th><Th>Year</th><th>Model</th><th>Points</th><th>Class</th><th>Actions</th></tr>
 	</thead><tbody>";
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		$capitalizedname = ucwords($row[2]);
 		if (trim($capitalizedname) == "") { $capitalizedname = ucwords($row[1]); }
 		// rrich 1/27/2017: If it is a "Gonzo" class car, but has less than the minimum gonzo class points, make the total points the minimum value.

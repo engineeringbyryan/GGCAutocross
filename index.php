@@ -1,17 +1,17 @@
 <?php
 include('functions.php');
-sqlconnect();
+$db = sqlconnect();
 include('auth.php');
 if ($_GET[user]) {
 	if ($usergroup == "admin"){
 		$username = $_GET[user];
 	}
 }	
-sqlconnect();
+$db = sqlconnect();
 
 
-$result = mysql_query("SELECT * FROM wp_users WHERE user_login = '$username'") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM wp_users WHERE user_login = '$username'") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	$userid = $row[0];
 	$display_name = $row[9];
 }
@@ -99,31 +99,31 @@ if ($display_name == $username) {
 }
 
 
-$result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '$username' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());
-if (mysql_num_rows($result) == "0"){
+$result = mysqli_query($db, "SELECT drivernumber FROM autox_numbers WHERE `username` = '$username' ORDER BY `drivernumber` ASC") or die("Error: " . mysqli_error());
+if (mysqli_num_rows($result) == "0"){
 	echo"<br><Br><span class='badge badge-important'>You have not chosen a number.  You must choose a number to compete!</span><br><br>  Choose a number here: ";
 } else {
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		$mynumber = $row[0];
 	}
 	echo"<p><img src='generatepic.php?number=$mynumber' class='firstelement'></p> If you'd like a different number, choose it here: "; 
 }
 	echo"<select name='drivernumber' class='span1' id='numberform'><option value=''></option>";
-	$result = mysql_query("SELECT drivernumber FROM autox_numbers WHERE `username` = '' ORDER BY `drivernumber` ASC") or die("Error: " . mysql_error());
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	$result = mysqli_query($db, "SELECT drivernumber FROM autox_numbers WHERE `username` = '' ORDER BY `drivernumber` ASC") or die("Error: " . mysqli_error());
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		echo"<option value='$row[0]'>$row[0]</option>";
 	}
 echo"</select>";
-$result = mysql_query("SELECT * FROM autox_classifications WHERE `username` = '$username' AND `active` != 'H'") or die("Error: " . mysql_error());
-if (mysql_num_rows($result) != "0") {
+$result = mysqli_query($db, "SELECT * FROM autox_classifications WHERE `username` = '$username' AND `active` != 'H'") or die("Error: " . mysqli_error());
+if (mysqli_num_rows($result) != "0") {
 	echo"<h4>Your Classified Cars</h4>";
-	if (mysql_num_rows($result) > 1) { echo"<h5>Click on a car to make it active for the next autocross</h5>";}
+	if (mysqli_num_rows($result) > 1) { echo"<h5>Click on a car to make it active for the next autocross</h5>";}
 	echo"
 	<table class='table table-condensed table-bordered' id='classifytable'>
 	<thead>
 	<tr class='tablehead'><th>Car</th><th>Points</th><th>Class</th><th>Actions</th></tr>
 	</thead><tbody>";
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	if ($row[11] == "Y"){
 		$rowclass = "success";
 		$activebutton = $row[0];
@@ -132,8 +132,8 @@ if (mysql_num_rows($result) != "0") {
 	}
 
 	// rrich 1/27/2017: Get the number of points where "Gonzo" class starts.
-  	$query = mysql_query("SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysql_error());
-	$gonzo = mysql_fetch_assoc($query);
+  	$query = mysqli_query($db, "SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysqli_error());
+	$gonzo = mysqli_fetch_assoc($query);
 	$gonzostartpoints = $gonzo['start_points'];
 
 	// rrich 1/27/2017: If it is a "Gonzo" class car, but has less than the minimum gonzo class points, make the total points the minimum value.
@@ -154,8 +154,8 @@ if (!$activebutton){ echo"<br><Br><span class='badge badge-important' id='classw
 	<br><Br>
 	<select name='other' id='copycar'>
 	<option value=''>Select a driver to copy</option>";
-	$result = mysql_query("SELECT autox_numbers.drivernumber,wp_users.display_name,autox_classifications.car_year,autox_classifications.car_model,autox_classifications.points,autox_classifications.class,autox_classifications.pk FROM autox_classifications,wp_users,autox_numbers WHERE wp_users.user_login = autox_classifications.username and wp_users.user_login = autox_numbers.username and autox_classifications.active = 'Y' ORDER BY autox_numbers.drivernumber") or die("Error: " . mysql_error());
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	$result = mysqli_query($db, "SELECT autox_numbers.drivernumber,wp_users.display_name,autox_classifications.car_year,autox_classifications.car_model,autox_classifications.points,autox_classifications.class,autox_classifications.pk FROM autox_classifications,wp_users,autox_numbers WHERE wp_users.user_login = autox_classifications.username and wp_users.user_login = autox_numbers.username and autox_classifications.active = 'Y' ORDER BY autox_numbers.drivernumber") or die("Error: " . mysqli_error());
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		echo"<option value='$row[6]'>#$row[0] - $row[1] - $row[2] $row[3] - $row[4] pts $row[5] class</option>";
 	}
 	echo"</select></div>";
@@ -169,9 +169,9 @@ if (!$activebutton){ echo"<br><Br><span class='badge badge-important' id='classw
 			<li class="nav-header">Upcoming autocrosses</li>
 <?php
 
-		$result = mysql_query("SELECT * FROM autox_dates ORDER BY `autoxdate` ASC") or die("Error: " . mysql_error());	
+		$result = mysqli_query($db, "SELECT * FROM autox_dates ORDER BY `autoxdate` ASC") or die("Error: " . mysqli_error());
 		$open = 0;
-		while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+		while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 			if (time() < strtotime("$row[1] 10:00AM")) {
 				$open++;
 				$thedate = date("D, M j", strtotime($row[1]));
@@ -234,7 +234,6 @@ $('.delcar').click(function(event){
 	//alert ("del car where id = " + trid);
 	$.get('updatecars.php?action=delcar&username=<?php echo $username;?>' + '&id='+trid, function(data) {
 		location.reload();
-		
 	});
 });
 

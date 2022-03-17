@@ -1,6 +1,6 @@
 <?php
 include('functions.php');
-sqlconnect();
+$db = sqlconnect();
 ?>
 <!DOCTYPE html>
 <html>
@@ -39,8 +39,8 @@ sqlconnect();
 <tbody>
 
 <?php
-$result = mysql_query("SELECT DATE_FORMAT(date, '%M %D, %Y') date , revision FROM autox_revision_history ORDER BY date ASC, id DESC") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db,"SELECT DATE_FORMAT(date, '%M %D, %Y') date , revision FROM autox_revision_history ORDER BY date ASC, id DESC") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
      echo"<tr><td>$row[0]</td><td>$row[1]</td></tr>";
 }
 ?>
@@ -63,8 +63,8 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 <tbody>
 
 <?php
-$result = mysql_query("SELECT * FROM autox_classes") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db,"SELECT * FROM autox_classes") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
      echo"<tr><td>$row[0]</td><td>$row[1]</td><td>$row[2]</td><td>$row[3]</td><td>$row[4]</td></tr>";
 }
 ?>

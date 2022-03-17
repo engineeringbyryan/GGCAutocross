@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('functions.php');
-sqlconnect();
+$db = sqlconnect();
 include('auth.php');
 ?>
 <!DOCTYPE html>
@@ -90,8 +90,8 @@ if (($carid == "") && ($year == "") && ($username != "" && ($closemsg == "" || $
         if ($usergroup == "admin"){
             echo"<script>
             var peoplelist = [";
-            $result = mysql_query("SELECT * FROM `wp_users`") or die("Error: " . mysql_error());
-            while ($row = mysql_fetch_array($result, MYSQL_NUM)) {  
+            $result = mysqli_query($db, "SELECT * FROM `wp_users`") or die("Error: " . mysqli_error());
+            while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
                 $escaped = str_replace("'", "", $row[9]);
                 echo"'$escaped ($row[1])',";
             }
@@ -103,15 +103,15 @@ if (($carid == "") && ($year == "") && ($username != "" && ($closemsg == "" || $
 
 }
 if ($year != "" && $carid == "") {
-    sqlconnect();
+    $db = sqlconnect();
     echo "<form id='step2' action='$_SERVER[PHP_SELF]' method='post' name='model'><input type='hidden' name='year' value='$year'>
     <div class='input-append'>
     <SELECT name='carid' class='span5' onchange='this.form.submit()'><option value=''>Select your car</option>";
-    $result = mysql_query("SELECT * FROM `autox_cars` WHERE `year_start` <=$year AND `year_end` >=$year ORDER BY `autox_cars`.`car` ASC") or die("Error: " . mysql_error());
-    while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+    $result = mysqli_query($db, "SELECT * FROM `autox_cars` WHERE `year_start` <=$year AND `year_end` >=$year ORDER BY `autox_cars`.`car` ASC") or die("Error: " . mysqli_error());
+    while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
         echo "<option value='$row[0]'>$row[1]</option>";
     }
-    mysql_free_result($result);
+    mysqli_free_result($result);
     echo "</SELECT></div></form>";
 }
 
@@ -119,12 +119,12 @@ if ($year != "" && $carid == "") {
 
 if ($year != "" && $carid != "") {
     $readytoclassify="Y";
-    sqlconnect();
-    $result = mysql_query("SELECT * FROM `autox_cars` WHERE `car_id` = '$carid'") or die("Error: " . mysql_error());
-    while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+    $db = sqlconnect();
+    $result = mysqli_query($db, "SELECT * FROM `autox_cars` WHERE `car_id` = '$carid'") or die("Error: " . mysqli_error());
+    while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
         $_SESSION['year'] = $year; //Push the year into a session cookie
         foreach ($row as $key => $value) { //Push the entire car information row into a session cookie
-            $_SESSION[mysql_field_name($result, $key)] = $value;
+            $_SESSION[mysqli_field_name($result, $key)] = $value;
         }
     }
     
@@ -140,8 +140,8 @@ if ($year != "" && $carid != "") {
     echo"<span class='label label-info'>Click on a modification to select/unselect</span><form id='options' action='calc.php' method='post'>";
     echo"<br>"; //rrich 3/19/2016
     echo"<span class='label label-info'>If you have a question about a particular modification or if your car has a modification<br> that this system does not handle (Ex: Increasing wheel sizes more than 3\"),<br> please contact us at autocross@ggcbmwcca.org so we can assist you in getting your car correctly classified.</span>"; //rrich 3/19/2016
-    $result = mysql_query("SELECT * FROM `autox_mod_categories` ORDER BY `mandatory_selection` DESC, `category_id`") or die("Error: " . mysql_error());
-    while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+    $result = mysqli_query($db, "SELECT * FROM `autox_mod_categories` ORDER BY `mandatory_selection` DESC, `category_id`") or die("Error: " . mysqli_error());
+    while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
         echo "<h4>$row[5]";
         if ($row[2] == "Y") {
             echo "    <span class='badge badge-important'>Selection required</span>";
@@ -176,14 +176,14 @@ if ($year != "" && $carid != "") {
         if ($showlsd != "N") {
     
         $query = "SELECT * FROM `autox_modifications` WHERE `category_id` = '$row[0]'";
-        $anotherresult = mysql_query($query) or die("Error: " . mysql_error());
+        $anotherresult = mysqli_query($db, $query) or die("Error: " . mysqli_error());
         if ($row[7] == "Y") { //allow a multiple selections on certain categories
             echo "<table class='table table-condensed table-bordered modstablemulti'>";
         } else {
             echo "<table class='table table-condensed table-bordered modstable'>";
         }
         echo "<thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th>Point value</th></tr></thead><tbody>";
-        while ($anotherrow = mysql_fetch_array($anotherresult, MYSQL_NUM)) {
+        while ($anotherrow = mysqli_fetch_array($anotherresult, MYSQLI_NUM)) {
             if ($anotherrow[0] == "38") {
                 $modpoints = $_SESSION['lsd_points'];
             } else {
@@ -216,8 +216,8 @@ if ($year != "" && $carid != "") {
           <p><button class='btn btn-info' id='hidethebuttons'>I have no engine modifications</button></p>
           <table class='table table-condensed table-bordered enginetablemulti'><thead><tr class='tablehead'><th style='padding-left:30px;'>Name</th><th style='padding-left:30px;'>% addt'l horsepower</th></tr></thead><tbody>";
     
-    $result = mysql_query("SELECT * FROM `autox_mods_engine` ORDER BY `percent` ASC") or die("Error: " . mysql_error());
-    while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+    $result = mysqli_query($db, "SELECT * FROM `autox_mods_engine` ORDER BY `percent` ASC") or die("Error: " . mysqli_error());
+    while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
         echo "<tr><Td class='span6' style='padding-left:30px;'>$row[2]</td><td class='span2 pointvalue' style='padding-left:30px;'>$row[3] </td><input type='hidden' name='engine_id[$row[0]]' value='false'></tr>";
     }
     echo"</table><table class='table table-condensed table-bordered enginetablemultiresults'>
@@ -236,8 +236,8 @@ if ($year != "" && $carid != "") {
 		if ($usergroup == "admin"){
 			echo"<script>
 			var peoplelist = [";
-	   		$result = mysql_query("SELECT * FROM `wp_users`") or die("Error: " . mysql_error());
-	   	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
+	   		$result = mysqli_query($db, "SELECT * FROM `wp_users`") or die("Error: " . mysqli_error());
+	   	   	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		   	   	$escaped = str_replace("'", "", $row[9]);
 	   	   		echo"'$escaped ($row[1])',";
 	   	   	}
@@ -274,9 +274,9 @@ function updatefloater(currentvalue,cumulativepoints)
     var chosencarclassval = $('#chosenclass').find(":selected").val();
     var texttodisplay = currentvalue + cumulativepoints;
     <?php
-    sqlconnect();
-    $result = mysql_query("SELECT * FROM `autox_classes`") or die("Error: " . mysql_error());
-    while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+    $db = sqlconnect();
+    $result = mysqli_query($db, "SELECT * FROM `autox_classes`") or die("Error: " . mysqli_error());
+    while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
         echo "if (texttodisplay >= $row[1] && texttodisplay <= $row[2]) { carclass = '$row[0]'; } ";
     }
     ?>
@@ -310,14 +310,14 @@ function updatefloater(currentvalue,cumulativepoints)
 }
 <?php
 echo "var enginemods = [";
-$result = mysql_query("SELECT * FROM `autox_engine_levels` WHERE engine_level = \"" . $_SESSION['engine_level'] . "\" AND `lsd` = 'N'") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM `autox_engine_levels` WHERE engine_level = \"" . $_SESSION['engine_level'] . "\" AND `lsd` = 'N'") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	echo "['" . $row[0] . "',". $row[3] . "," . $row[4] . "," . $row[2] . "],";
 }
 echo "['Z',0,0,0]];
 var enginemodslsd = [";
-$result = mysql_query("SELECT * FROM `autox_engine_levels` WHERE engine_level = \"" . $_SESSION['engine_level'] . "\" AND `lsd` = 'Y'") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM `autox_engine_levels` WHERE engine_level = \"" . $_SESSION['engine_level'] . "\" AND `lsd` = 'Y'") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	echo "['" . $row[0] . "',". $row[3] . "," . $row[4] . "," . $row[2] . "],";
 }
 echo "['Z',0,0,0]];";
@@ -376,8 +376,8 @@ if ($usergroup == "admin"){ echo "
 $('#chosenclass').change(function(event) {
     <?php 
         // rrich 1/27/2017: Get the number of points where "Gonzo" class starts.
-        $query = mysql_query("SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysql_error());
-        $gonzo = mysql_fetch_assoc($query);
+        $query = mysqli_query($db, "SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysqli_error());
+        $gonzo = mysqli_fetch_assoc($query);
         echo "var gonzostartpoints = " . $gonzo['start_points'] . ";";
     ?>
     finalpoints = currentvalue + cumulativepoints;

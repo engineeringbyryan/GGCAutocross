@@ -1,6 +1,6 @@
 <?php
 include('functions.php');
-sqlconnect();
+$db = sqlconnect();
 include('auth.php');
 ?>
 <!DOCTYPE html>
@@ -40,8 +40,8 @@ if ($usergroup == "admin"){
 	<Table class='table table-condensed table-striped'>
 	<thead><th>Date</th><th>Location</th><th>Action</th></thead>
 	<tbody>";
-	$result = mysql_query("SELECT * FROM `autox_dates` ORDER BY `autoxdate` ASC") or die("Error: " . mysql_error());
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	$result = mysqli_query($db, "SELECT * FROM `autox_dates` ORDER BY `autoxdate` ASC") or die("Error: " . mysqli_error());
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		echo"<tr id='$row[0]'><Td>$row[1]</td><Td>$row[2]</td><td><a href='#' class='btn btn-error deldate'>Delete</a></td></tr>";
 	}
 	echo"<tr><td><input class='input-small'id='datetoadd' placeholder='YYYY-MM-DD'></td><td><input class='input-medium' id='localetoadd'></td><td><a href='#' class='btn adddate'>Add</a></td></tr>";
@@ -53,15 +53,15 @@ if ($usergroup == "admin"){
 	<Table class='table table-condensed'>
 	<thead><th>Close date/time</th><th>Open date/time</th><th>Message</th><th>Actions</th></thead>
 	<tbody>";	
-	$result = mysql_query("SELECT * FROM `autox_close`") or die("Error: " . mysql_error());
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	$result = mysqli_query($db, "SELECT * FROM `autox_close`") or die("Error: " . mysqli_error());
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		echo"<tr id='$row[0]'><Td><input id='closedate' class='input-large' value='$row[1]'></td><Td><input id='opendate' class='input-large' value='$row[2]'></td><Td><textarea id='msg' rows='3'>$row[3]</textarea></td><td><a href='#' class='btn updatetimes'>Update</a></td></tr>";
 	}
 	echo"</table>";
 	
 
-	$result = mysql_query("SELECT * FROM autox_closeoverride") or die("Error: " . mysql_error());
-	$close_override = mysql_fetch_row($result)[0];
+	$result = mysqli_query($db, "SELECT * FROM autox_closeoverride") or die("Error: " . mysqli_error());
+	$close_override = mysqli_fetch_row($result)[0];
 
 	if ($closemsg && $close_override == ""){
 		echo "<a href='#' class='btn btn-success opensystem'>Disable Automatic System Close</a><br><br>";
@@ -84,8 +84,8 @@ if ($usergroup == "admin"){
 
 	Go to main page as someone else: <select id='alternateuser'>";
 
-	$result = mysql_query("SELECT * FROM `wp_users` ORDER BY `display_name` ASC") or die("Error: " . mysql_error());
-	   	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
+	$result = mysqli_query($db, "SELECT * FROM `wp_users` ORDER BY `display_name` ASC") or die("Error: " . mysqli_error());
+	   	   	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 		   	   	$escaped = str_replace("'", "", $row[9]);
 	   	   		echo"<option value='$row[1]'>$escaped ($row[1])</option>";
 
@@ -94,8 +94,8 @@ if ($usergroup == "admin"){
 	echo"</select><br><br><br>";
 
 	$avalible_numbers = "<option value='0'></option>";
-	$result = mysql_query("SELECT drivernumber FROM `autox_numbers` WHERE username = '' ORDER BY drivernumber ASC") or die("Error: " . mysql_error());
-		while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	$result = mysqli_query($db, "SELECT drivernumber FROM `autox_numbers` WHERE username = '' ORDER BY drivernumber ASC") or die("Error: " . mysqli_error());
+		while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 			$avalible_numbers .= "<option value='$row[0]'>$row[0]</option>";
 		}
 	echo"<h3>Assigned Driver Numbers</h3>
@@ -104,8 +104,8 @@ if ($usergroup == "admin"){
 	<tbody>";
 
 
-	$result = mysql_query("SELECT u.user_login, u.display_name, an.drivernumber FROM `autox_numbers` an JOIN `wp_users` u ON an.username = u.user_login ORDER BY an.drivernumber ASC") or die("Error: " . mysql_error());
-	   	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {	
+	$result = mysqli_query($db, "SELECT u.user_login, u.display_name, an.drivernumber FROM `autox_numbers` an JOIN `wp_users` u ON an.username = u.user_login ORDER BY an.drivernumber ASC") or die("Error: " . mysqli_error());
+	   	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 			echo"<tr id='$row[0]'><Td>$row[1]</td><Td>$row[2]</td><td><select class='updatenumber'>$avalible_numbers</select></td><td><a href='#' class='btn unassignnumber'>Unassign</a></td></tr>";
 	}
 

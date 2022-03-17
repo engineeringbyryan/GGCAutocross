@@ -3,15 +3,26 @@
 
 function sqlconnect()
 {
-    $dbhost="db.bmwautocross.com";
-    $dbuser="GGCAutocross";
-    $dbpassword="FGT2M6q3[yh3vepd";
-    $dbname="GGC_Autocross";
-    $db = mysql_connect($dbhost,$dbuser,$dbpassword) or die("Couldn't connect to the database.");
-    mysql_select_db($dbname) or die("Couldn't select the database");
+    $dbhost="";
+    $dbuser="";
+    $dbpassword="";
+    $dbname="";
+
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    $db = new mysqli($dbhost, $dbuser, $dbpassword, $dbname);
+
+    if ($db -> connect_errno) {
+        echo "Failed to connect to MySQL: " . $db -> connect_error;
+        exit();
+    }
+
+    return $db;
 }
 
-
+function sqldisconnect($db)
+{
+    mysqli_close($db);
+}
 
 function sendemail($emailto, $emailsubject, $emailbody) {
     $mailfromname="GGC Autocross";
@@ -59,14 +70,10 @@ function togoto ($loca)
 
 
 function writelog($username, $logdata){
-        sqlconnect();
-#		$handle=fopen("/data/webroot/autox.ggcbmwcca.org/html/axlogs/axlog.txt", "a");
+        $db = sqlconnect();
         $datenow = date("Y-m-d");
         $timenow = date("G:i:s");
-        $result = mysql_query("INSERT INTO autox_logs VALUES ('$datenow', '$timenow', '$_SERVER[REMOTE_ADDR]', '$username', '$logdata')") or die("Error: " . mysql_error());
-#        fwrite($handle, $now . "$_SERVER[REMOTE_ADDR] - " . $result . "\n");
-#		fclose($handle);
-
+        mysqli_query($db, "INSERT INTO autox_logs VALUES ('$datenow', '$timenow', '$_SERVER[REMOTE_ADDR]', '$username', '$logdata')") or die("Error: " . mysqli_error());
 }
 
 
@@ -77,6 +84,10 @@ function echoActiveClassIfRequestMatches($requestUri)
         echo 'class="active"';
 }
 
-
+function mysqli_field_name($result, $field_offset)
+{
+    $properties = mysqli_fetch_field_direct($result, $field_offset);
+    return is_object($properties) ? $properties->name : null;
+}
 
 ?>

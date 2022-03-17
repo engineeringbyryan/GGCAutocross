@@ -2,16 +2,16 @@
 date_default_timezone_set("America/Los_Angeles"); 
 
 
-$result = mysql_query("SELECT * FROM autox_close") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM autox_close") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	$close = $row[1];
 	$open = $row[2];
 	$msg = $row[3];
 }
 
 
-$result = mysql_query("SELECT * FROM autox_dates") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM autox_dates") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	$autocross = strtotime($row[1]);
 	if ((time() >= strtotime("$close", $autocross)) && (time() <= strtotime("$open", $autocross))) 	{
 		$closemsg = "<div class='alert alert-error'><button type='button' class='close' data-dismiss='alert'>&times;</button>$msg</div>";
@@ -19,8 +19,8 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 }
 
 
-$result = mysql_query("SELECT * FROM autox_closeoverride") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM autox_closeoverride") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	if (($closemsg) && ($row[0] == "open")) { unset($closemsg);}
 	if ((!$closemsg) && ($row[0] == "close")) { 
 		if ($row[1] == "") {  	

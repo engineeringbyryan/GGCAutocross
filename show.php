@@ -1,6 +1,6 @@
 <?php
 include('functions.php');
-sqlconnect();
+$db = sqlconnect();
 
 $popup = $_GET[popup];
 
@@ -41,10 +41,10 @@ if ($popup != 'Y'){
 
 $id = $_GET[id];
 
-$result = mysql_query("SELECT * FROM autox_classifications WHERE `pk` = '$id'") or die("Error: " . mysql_error());
+$result = mysqli_query($db, "SELECT * FROM autox_classifications WHERE `pk` = '$id'") or die("Error: " . mysqli_error());
 
 
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 
 	$car_id = unserialize($row[6]);
 	$mod_id = unserialize($row[7]);
@@ -80,8 +80,8 @@ if ($packagepoints == "") {$packagepoints = "0";}
 echo "<Tr><Td>package wheel/tire points</td><td> $packagepoints</td></tr>";
 
 
-$result = mysql_query("SELECT * FROM `autox_modifications`") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM `autox_modifications`") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
     $checkformod = $mod_id[$row[0]];
     if ($checkformod == "true") {
         $modpoints = $modpoints + $row[4];
@@ -99,8 +99,8 @@ if ($mod_id[38] == "true") {
 
 
 
-$result = mysql_query("SELECT * FROM `autox_mods_engine`") or die("Error: " . mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query($db, "SELECT * FROM `autox_mods_engine`") or die("Error: " . mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
     $checkformod = $engine_id[$row[0]];
     if ($checkformod == "true") {
         $enginepercent = $enginepercent + $row[3];
@@ -115,9 +115,9 @@ if (!isset($lsd)) {
 	$lsd = $car_id['LSD_standard'];
 }
 
-$result = mysql_query("SELECT * FROM `autox_engine_levels` WHERE `engine_level` = '$car_id[engine_level]' AND `lsd` = '$lsd'") or die("Error: " . mysql_error());
+$result = mysqli_query($db, "SELECT * FROM `autox_engine_levels` WHERE `engine_level` = '$car_id[engine_level]' AND `lsd` = '$lsd'") or die("Error: " . mysqli_error());
 
-while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 
 	if ($enginepercent >= $row[3] && $enginepercent <= $row[4]) {
 		$enginepoints = $row[2];
@@ -130,9 +130,9 @@ while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
 if ($flywheelhp != ""){
 	echo"<tr><td>Declared rear wheel hp</td><Td>$flywheelhp hp</td></tr>";
 	$enginepercent = round(((($flywheelhp / .85) / $car_id['BHP'])-1)*100,0);
-	$result = mysql_query("SELECT * FROM `autox_engine_levels` WHERE `engine_level` = '$car_id[engine_level]' AND `lsd` = '$lsd'") or die("Error: " . mysql_error());
+	$result = mysqli_query($db, "SELECT * FROM `autox_engine_levels` WHERE `engine_level` = '$car_id[engine_level]' AND `lsd` = '$lsd'") or die("Error: " . mysqli_error());
 
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+	while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
 	if ($enginepercent >= $row[3] && $enginepercent <= $row[4]) {
 		$enginepoints = $row[2];
 	}
@@ -158,8 +158,8 @@ if ($enginepercent) {
 
 
 // rrich 1/27/2017: Get the number of points where "Gonzo" class starts.
-$query = mysql_query("SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysql_error());
-$gonzo = mysql_fetch_assoc($query);
+$query = mysqli_query($db, "SELECT * FROM `autox_classes` WHERE class = 'Gonzo' LIMIT 1") or die("Error: " . mysqli_error());
+$gonzo = mysqli_fetch_assoc($query);
 $gonzostartpoints = $gonzo['start_points'];
 
 // rrich 1/27/2017: If it is a "Gonzo" class car, but has less than the minimum gonzo class points, define how many points were added to make it a "Gonzo" class car and make the total points the minimum value.
